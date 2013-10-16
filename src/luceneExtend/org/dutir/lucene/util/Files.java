@@ -1,4 +1,33 @@
 /*
+ * Terrier - Terabyte Retriever
+ * Webpage: http://terrier.org
+ * Contact: terrier{a.}dcs.gla.ac.uk
+ * University of Glasgow - School of Computing Science
+ * http://www.ac.gla.uk
+ *
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the LiCense for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is TRECQuerying.java.
+ *
+ * The Original Code is Copyright (C) 2004-2011 the University of Glasgow.
+ * All Rights Reserved.
+ *
+*/
+
+/*
+* This file is probably based on a class with the same name from Terrier, 
+* so we keep the copyright head here. If you have any question, please notify me first.
+* Thanks. 
+*/
+/*
  * Terrier - Terabyte Retriever 
  * Webpage: http://ir.dcs.gla.ac.uk/terrier 
  * Contact: terrier{a.}dcs.gla.ac.uk
@@ -113,12 +142,12 @@ public class Files
 	/** initialise the transformations from Application property */
 	protected static void intialise_transformations()
 	{
-		final String[] transforms = ApplicationSetup.getProperty("files.transforms","").split("\\s*,\\s*");
+		final String[] transforms = ApplicationSetup.getProperty("files.transforms","").split("\s*,\s*");
 		for(String transform: transforms)
 		{
 			if (transform.length() == 0)
 				continue;
-			String parts[] = transform.split("\\s*>\\s*");
+			String parts[] = transform.split("\s*>\s*");
 			addPathTransormation(parts[0], parts[1]);
 		}
 	}
@@ -154,7 +183,7 @@ public class Files
 	protected static FileSystem getFileSystem(String filename)
 	{
 		//check to see if filename is in a URI form
-		if (! filename.matches("^\\w+:.*$"))
+		if (! filename.matches("^\w+:.*$"))
 			return fileSystems.get(DEFAULT_SCHEME);
 		//identify scheme component of filename
 		final int colonPos = filename.indexOf(":"); 
@@ -165,7 +194,7 @@ public class Files
 		{	//TODO debug, remove or make to logger
 			System.err.println("FS for "+filename +"(scheme '"+scheme+"') is "+ rtr);
 			for (String s : fileSystems.keySet())
-				 System.err.println("\tscheme: "+s);
+				 System.err.println("	scheme: "+s);
 		}
 		return rtr;
 	}
@@ -287,7 +316,8 @@ public class Files
 		final FileSystem fs = getFileSystem(path);
 		if (fs == null)
 			return false;
-		//System.err.printf("Cap: %d Stat: %d check: %d\n", fs.capabilities() , FSCapability.STAT, (fs.capabilities() & FSCapability.STAT));
+		//System.err.printf("Cap: %d Stat: %d check: %d
+", fs.capabilities() , FSCapability.STAT, (fs.capabilities() & FSCapability.STAT));
 		if ((fs.capabilities() & FSCapability.STAT) == 0)
 			return true;
 		try{
