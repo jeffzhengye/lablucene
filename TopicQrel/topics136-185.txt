@@ -1,0 +1,300 @@
+<top>
+<num> Number: 136
+<desc>
+Children with dental caries
+</top>
+
+<top>
+<num> Number: 137
+<desc>
+Patients with inflammatory disorders receiving TNF-inhibitor treatments
+</top>
+
+<top>
+<num> Number: 138
+<desc>
+Patients with acute tubular necrosis due to aminoglycoside antibiotics
+</top>
+
+<top>
+<num> Number: 139
+<desc>
+Patients who presented to the emergency room with an actual or suspected miscarriage
+</top>
+
+<top>
+<num> Number: 140
+<desc>
+Patients who developed disseminated intravascular coagulation in the hospital
+</top>
+
+<top>
+<num> Number: 141
+<desc>
+Adult inpatients with Alzheimer's disease admitted from nursing homes with pressure ulcers
+</top>
+
+<top>
+<num> Number: 142
+<desc>
+Patients admitted with Hepatitis C and IV drug use
+</top>
+
+<top>
+<num> Number: 143
+<desc>
+Patients who have had a carotid endarterectomy
+</top>
+
+<top>
+<num> Number: 144
+<desc>
+Patients with diabetes mellitus who also have thrombocytosis
+</top>
+
+<top>
+<num> Number: 145
+<desc>
+Patients with lupus nephritis and thrombotic thrombocytopenic purpura
+</top>
+
+<top>
+<num> Number: 146
+<desc>
+Patients treated for post-partum problems including depression, hypercoagulability or cardiomyopathy
+</top>
+
+<top>
+<num> Number: 147
+<desc>
+Patients with left lower quadrant abdominal pain
+</top>
+
+<top>
+<num> Number: 148
+<desc>
+Patients acutely treated for migraine in the emergency department
+</top>
+
+<top>
+<num> Number: 149
+<desc>
+Patients with delirium, hypertension, and tachycardia
+</top>
+
+<top>
+<num> Number: 150
+<desc>
+Patients who have cerebral palsy and depression
+</top>
+
+<top>
+<num> Number: 151
+<desc>
+Patients with liver disease taking SSRI antidepressants
+</top>
+
+<top>
+<num> Number: 152
+<desc>
+Patients with Diabetes exhibiting good Hemoglobin A1c Control (<8.0%)
+</top>
+
+<top>
+<num> Number: 153
+<desc>
+Patients admitted to the hospital with end-stage chronic disease who are offered hospice care
+</top>
+
+<top>
+<num> Number: 154
+<desc>
+Patients with Primary Open Angle Glaucoma (POAG)
+</top>
+
+<top>
+<num> Number: 155
+<desc>
+Heart Failure (HF): Beta-Blocker Therapy for Left Ventricular Systolic Dysfunction (LVSD)
+</top>
+
+<top>
+<num> Number: 156
+<desc>
+Patients with depression on anti-depressant medication
+</top>
+
+<top>
+<num> Number: 157
+<desc>
+Patients admitted to hospital with symptomatic cervical spine lesions
+</top>
+
+<top>
+<num> Number: 158
+<desc>
+Patients with esophageal cancer who develop pericardial effusion
+</top>
+
+<top>
+<num> Number: 159
+<desc>
+Patients with cerebral edema secondary to infection
+</top>
+
+<top>
+<num> Number: 160
+<desc>
+Patients with Low Back Pain who had Imaging Studies
+</top>
+
+<top>
+<num> Number: 161
+<desc>
+Patients with adult respiratory distress syndrome
+</top>
+
+<top>
+<num> Number: 162
+<desc>
+Patients with hypertension on anti-hypertensive medication
+</top>
+
+<top>
+<num> Number: 163
+<desc>
+Patients treated for lower extremity chronic wound
+</top>
+
+<top>
+<num> Number: 164
+<desc>
+Adults under age 60 undergoing alcohol withdrawal
+</top>
+
+<top>
+<num> Number: 165
+<desc>
+Patients who have gluten intolerance or celiac disease
+</top>
+
+<top>
+<num> Number: 166
+<desc>
+Patients who have hypoaldosteronism and hypokalemia
+</top>
+
+<top>
+<num> Number: 167
+<desc>
+Patients with AIDS who develop pancytopenia
+</top>
+
+<top>
+<num> Number: 168
+<desc>
+Patients with Coronary Artery Disease with Prior Myocardial Infarction on Beta-Blocker Therapy
+</top>
+
+<top>
+<num> Number: 169
+<desc>
+Elderly patients with subdural hematoma
+</top>
+
+<top>
+<num> Number: 170
+<desc>
+Adult patients who presented to the emergency room with suicide attempts by drug overdose
+</top>
+
+<top>
+<num> Number: 171
+<desc>
+Patients with thyrotoxicosis treated with beta-blockers
+</top>
+
+<top>
+<num> Number: 172
+<desc>
+Patients with peripheral neuropathy and edema
+</top>
+
+<top>
+<num> Number: 173
+<desc>
+Patients over 65 who had Pneumonia Vaccination Status presently or previously
+</top>
+
+<top>
+<num> Number: 174
+<desc>
+Elderly patients with ventilator-associated pneumonia
+</top>
+
+<top>
+<num> Number: 175
+<desc>
+Elderly patients with endocarditis
+</top>
+
+<top>
+<num> Number: 176
+<desc>
+Patients with Heart Failure (HF) on Angiotensin-Converting Enzyme (ACE) Inhibitor or Angiotensin Receptor Blocker (ARB) Therapy for Left Ventricular Systolic Dysfunction (LVSD)
+</top>
+
+<top>
+<num> Number: 177
+<desc>
+Patients treated for depression after myocardial infarction
+</top>
+
+<top>
+<num> Number: 178
+<desc>
+Patients with metastatic breast cancer
+</top>
+
+<top>
+<num> Number: 179
+<desc>
+Patients taking atypical antipsychotics without a diagnosis schizophrenia or bipolar depression
+</top>
+
+<top>
+<num> Number: 180
+<desc>
+Patients with cancer who developed hypercalcemia
+</top>
+
+<top>
+<num> Number: 181
+<desc>
+Patients being evaluated for secondary hypertension
+</top>
+
+<top>
+<num> Number: 182
+<desc>
+Patients with Ischemic Vascular Disease
+</top>
+
+<top>
+<num> Number: 183
+<desc>
+Patients presenting to the emergency room with acute vision loss
+</top>
+
+<top>
+<num> Number: 184
+<desc>
+Patients with Colon Cancer who had Chemotherapy
+</top>
+
+<top>
+<num> Number: 185
+<desc>
+Patients who develop thrombocytopenia in pregnancy
+</top>
+

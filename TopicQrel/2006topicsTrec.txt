@@ -1,0 +1,140 @@
+<top>
+<num>160</num>
+<title>What is the role of PrnP in mad cow disease?</title>
+</top>
+
+<top>
+<num>161</num>
+<title>What is the role of IDE in Alzheimer's disease</title>
+</top>
+
+<top>
+<num>162</num>
+<title>What is the role of MMS2 in cancer?</title>
+</top>
+
+<top>
+<num>163</num>
+<title>What is the role of APC (adenomatous polyposis coli) in colon cancer?</title>
+</top>
+
+<top>
+<num>164</num>
+<title>What is the role of Nurr-77 in Parkinson's disease?</title>
+</top>
+
+<top>
+<num>165</num>
+<title>How do Cathepsin D (CTSD) and apolipoprotein E (ApoE) interactions contribute to Alzheimer's disease?</title>
+</top>
+
+<top>
+<num>166</num>
+<title>What is the role of Transforming growth factor-beta1 (TGF-beta1) in cerebral amyloid angiopathy (CAA)?</title>
+</top>
+
+<top>
+<num>167</num>
+<title>How does nucleoside diphosphate kinase (NM23) contribute to tumor progression?</title>
+</top>
+
+<top>
+<num>168</num>
+<title>How does BARD1 regulate BRCA1 activity?</title>
+</top>
+
+<top>
+<num>169</num>
+<title>How does APC (adenomatous polyposis coli) protein affect actin assembly</title>
+</top>
+
+<top>
+<num>170</num>
+<title>How does COP2 contribute to CFTR export from the endoplasmic reticulum?</title>
+</top>
+
+<top>
+<num>171</num>
+<title>How does Nurr-77 delete T cells before they migrate to the spleen or lymph nodes and how does this impact autoimmunity?</title>
+</top>
+
+<top>
+<num>172</num>
+<title>How does p53 affect apoptosis?</title>
+</top>
+
+<top>
+<num>173</num>
+<title>How do alpha7 nicotinic receptor subunits affect ethanol metabolism?</title>
+</top>
+
+<top>
+<num>174</num>
+<title>How does BRCA1 ubiquitinating activity contribute to cancer?</title>
+</top>
+
+<top>
+<num>175</num>
+<title>How does L2 interact with L1 to form HPV11 viral capsids?</title>
+</top>
+
+<top>
+<num>176</num>
+<title>How does Sec61-mediated CFTR degradation contribute to cystic fibrosis?</title>
+</top>
+
+<top>
+<num>177</num>
+<title>How do Bop-Pes interactions affect cell growth?</title>
+</top>
+
+<top>
+<num>178</num>
+<title>How do interactions between insulin-like GFs and the insulin receptor affect skin biology?</title>
+</top>
+
+<top>
+<num>179</num>
+<title>How do interactions between HNF4 and COUP-TF1 suppress liver function?</title>
+</top>
+
+<top>
+<num>180</num>
+<title>How do Ret-GDNF interactions affect liver development?</title>
+</top>
+
+<top>
+<num>181</num>
+<title>How do mutations in the Huntingtin gene affect Huntington's disease?</title>
+</top>
+
+<top>
+<num>182</num>
+<title>How do  mutations in Sonic Hedgehog genes affect developmental disorders?</title>
+</top>
+
+<top>
+<num>183</num>
+<title>How do  mutations in the NM23 gene affect tracheal development?</title>
+</top>
+
+<top>
+<num>184</num>
+<title>How do  mutations in the Pes gene affect cell growth?</title>
+</top>
+
+<top>
+<num>185</num>
+<title>How do  mutations in the hypocretin receptor 2 gene affect narcolepsy?</title>
+</top>
+
+<top>
+<num>186</num>
+<title>How do  mutations in the Presenilin-1 gene affect Alzheimer's disease?</title>
+</top>
+
+<top>
+<num>187</num>
+<title>How do  mutations in familial hemiplegic migraine type 1 (FHM1) gene affect calcium ion influx in hippocampal neurons?</title>
+</top>
+

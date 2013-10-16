@@ -1,0 +1,50 @@
+136 Children with dental caries
+137 Patients with inflammatory disorders receiving TNF-inhibitor treatments
+138 Patients with acute tubular necrosis due to aminoglycoside antibiotics
+139 Patients who presented to the emergency room with an actual or suspected miscarriage
+140 Patients who developed disseminated intravascular coagulation in the hospital
+141 Adult inpatients with Alzheimer's disease admitted from nursing homes with pressure ulcers
+142 Patients admitted with Hepatitis C and IV drug use
+143 Patients who have had a carotid endarterectomy
+144 Patients with diabetes mellitus who also have thrombocytosis
+145 Patients with lupus nephritis and thrombotic thrombocytopenic purpura
+146 Patients treated for post-partum problems including depression, hypercoagulability or cardiomyopathy
+147 Patients with left lower quadrant abdominal pain
+148 Patients acutely treated for migraine in the emergency department
+149 Patients with delirium, hypertension, and tachycardia
+150 Patients who have cerebral palsy and depression
+151 Patients with liver disease taking SSRI antidepressants
+152 Patients with Diabetes exhibiting good Hemoglobin A1c Control 
+153 Patients admitted to the hospital with end-stage chronic disease who are offered hospice care
+154 Patients with Primary Open Angle Glaucoma POAG
+155 Heart Failure HF Beta-Blocker Therapy for Left Ventricular Systolic Dysfunction LVSD
+156 Patients with depression on anti-depressant medication
+157 Patients admitted to hospital with symptomatic cervical spine lesions
+158 Patients with esophageal cancer who develop pericardial effusion
+159 Patients with cerebral edema secondary to infection
+160 Patients with Low Back Pain who had Imaging Studies
+161 Patients with adult respiratory distress syndrome
+162 Patients with hypertension on anti-hypertensive medication
+163 Patients treated for lower extremity chronic wound
+164 Adults under age 60 undergoing alcohol withdrawal
+165 Patients who have gluten intolerance or celiac disease
+166 Patients who have hypoaldosteronism and hypokalemia
+167 Patients with AIDS who develop pancytopenia
+168 Patients with Coronary Artery Disease with Prior Myocardial Infarction on Beta-Blocker Therapy
+169 Elderly patients with subdural hematoma
+170 Adult patients who presented to the emergency room with suicide attempts by drug overdose
+171 Patients with thyrotoxicosis treated with beta-blockers
+172 Patients with peripheral neuropathy and edema
+173 Patients over 65 who had Pneumonia Vaccination Status presently or previously
+174 Elderly patients with ventilator-associated pneumonia
+175 Elderly patients with endocarditis
+176 Patients with Heart Failure HF on Angiotensin-Converting Enzyme ACE Inhibitor or Angiotensin Receptor Blocker ARB Therapy for Left Ventricular Systolic Dysfunction LVSD
+177 Patients treated for depression after myocardial infarction
+178 Patients with metastatic breast cancer
+179 Patients taking atypical antipsychotics without a diagnosis schizophrenia or bipolar depression
+180 Patients with cancer who developed hypercalcemia
+181 Patients being evaluated for secondary hypertension
+182 Patients with Ischemic Vascular Disease
+183 Patients presenting to the emergency room with acute vision loss
+184 Patients with Colon Cancer who had Chemotherapy
+185 Patients who develop thrombocytopenia in pregnanc
