@@ -1,0 +1,363 @@
+package uk.ac.gla.terrier.querying;
+
+import gnu.trove.THashMap;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import uk.ac.gla.terrier.matching.MatchingQueryTerms;
+import uk.ac.gla.terrier.matching.ResultSet;
+import uk.ac.gla.terrier.structures.ExpansionTerms;
+import uk.ac.gla.terrier.structures.ExpansionTerms.ExpansionTerm;
+import uk.ac.gla.terrier.utility.ApplicationSetup;
+import uk.ac.gla.terrier.utility.Files;
+import uk.ac.gla.terrier.utility.Rounding;
+
+/**
+ * 
+ * 
+ * @author rodrygo
+ */
+public class RocchioQueryExpansion extends RocchioQueryExpansion {
+
+	/** Lists of feedback documents mapped to each topic */
+	private THashMap<String, Feedback> feedbackMap;
+	private double alpha;
+	private double beta;
+	private double gamma;
+
+	/**
+	 * Class for encapsulating feedback documents for a given topic.
+	 * 
+	 * @author rodrygo
+	 */
+	private class Feedback {
+		/** list of positive feedback documents */
+		private ArrayList<String> positiveDocs;
+		/** list of negative feedback documents */
+		private ArrayList<String> negativeDocs;
+		
+		public Feedback() {
+			positiveDocs = new ArrayList<String>();
+			negativeDocs = new ArrayList<String>();
+		}
+		
+		public ArrayList<String> getPositiveDocs() {
+			return positiveDocs;
+		}
+		
+		public ArrayList<String> getNegativeDocs() {
+			return negativeDocs;
+		}
+	}
+	
+	public RocchioQueryExpansion() {
+		this.alpha = Double.parseDouble(ApplicationSetup.getProperty("rocchio_alpha", "1d"));
+		this.beta = Double.parseDouble(ApplicationSetup.getProperty("rocchio_beta", "0.75d"));
+		this.gamma = Double.parseDouble(ApplicationSetup.getProperty("rocchio_gamma", "0.15d"));
+		loadFeedback(ApplicationSetup.getProperty("feedback.filename", ApplicationSetup.TERRIER_ETC + ApplicationSetup.FILE_SEPARATOR + "feedback"));
+	}
+	
+	private void loadFeedback(String filename) {		
+		logger.debug("Loading feedback information from "+filename+"...");
+		try {
+			feedbackMap = new THashMap<String, Feedback>();
+			
+			BufferedReader br = Files.openFileReader(filename);
+			String line = null;
+			// for each line in the feedback (qrels) file
+			while ((line = br.readLine()) != null){
+				line = line.trim();
+				if (line.length() == 0) {
+					continue;
+				}
+				
+				// split line into space-separated pieces
+				String[] pieces = line.split("\\s+");
+				
+				// grab topic id
+				String topId = pieces[0];		
+				// grab docno
+				String docNo = pieces[2];
+				// grab relevance judgment of docno with respect to this topic
+				boolean relevant = Integer.parseInt(pieces[3]) > 0;
+				
+				// add topic entry to the feedback map
+				if (!feedbackMap.contains(topId)) {
+					feedbackMap.put(topId, new Feedback());
+				}
+				
+				// add docno to the appropriate feedback list for this topic
+				if (relevant) {
+					feedbackMap.get(topId).getPositiveDocs().add(docNo);
+				}
+				else {
+					feedbackMap.get(topId).getNegativeDocs().add(docNo);
+				}
+			}
+			
+			br.close();
+			
+		} catch(IOException e){
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	/**
+	 * Re-weigh original query terms and possibly expand them with the highest
+	 * scored terms in the relevant set considered according to the Rocchio's
+	 * algorithm.
+	*  Expand query from positive and negative sets separately. Weights of an expansion term
+	*  occurring in both sets are combined at the end.
+	 */
+	public void expandQuery(MatchingQueryTerms query, ResultSet resultSet) {
+		this.alpha = Double.parseDouble(ApplicationSetup.getProperty("rocchio_alpha", "1d"));
+		this.beta = Double.parseDouble(ApplicationSetup.getProperty("rocchio_beta", "0.75d"));
+		this.gamma = Double.parseDouble(ApplicationSetup.getProperty("rocchio_gamma", "0.15d"));
+		logger.debug("alpha: "+alpha+", beta: "+beta+", gamma: "+gamma);
+		
+		// the number of term to re-weight (i.e. to do relevance feedback) is
+		// the maximum between the system setting and the actual query length.
+		// if the query length is larger than the system setting, it does not
+		// make sense to do relevance feedback for a portion of the query. Therefore, 
+		// we re-weight the number of query length of terms.
+		int numberOfTermsToReweight = Math.max(ApplicationSetup.EXPANSION_TERMS, query.length());
+		if (ApplicationSetup.EXPANSION_TERMS == 0) {
+			numberOfTermsToReweight = 0;
+		}
+
+		// current topic id
+		String topId = query.getQueryId();
+		// get docnos from the positive feedback documents for this query
+		ArrayList<String> positiveDocnos = feedbackMap.get(topId).getPositiveDocs();
+		String[] positiveDocArr = positiveDocnos.toArray(new String[positiveDocnos.size()]);
+		// get docnos from the negative feedback documents for this query
+		ArrayList<String> negativeDocnos = feedbackMap.get(topId).getNegativeDocs();
+		String[] negativeDocArr = negativeDocnos.toArray(new String[negativeDocnos.size()]);
+
+		// if there is no positive feedback for this query
+		if (positiveDocArr.length == 0) {
+			// take the pseudo-relevance set as the positive docnos
+			int[] docids = resultSet.getDocids();
+			positiveDocArr = new String[ApplicationSetup.EXPANSION_DOCUMENTS];
+			for (int i = 0; i < positiveDocArr.length; i++) {
+				positiveDocArr[i] = ""+docids[i];
+					//documentIndex.getDocumentNumber(docids[i]);
+			}
+		}
+		
+		int positiveCount = positiveDocArr.length;
+		int negativeCount = negativeDocArr.length;
+		
+		System.out.println("# POSITIVE DOCS: " + positiveCount);
+		System.out.println("# NEGATIVE DOCS: " + negativeCount);
+		
+		// return in case there is no (pseudo-)relevance feedback evidence for this query
+		if (positiveCount == 0 && negativeCount == 0) {
+			return;
+		}
+
+		// --------------------------------------------------------------------		
+		// COMPUTATION OF POSITIVE WEIGHTS ------------------------------------
+		// --------------------------------------------------------------------
+		
+		// get ids of positive feedback documents
+		int[] positiveDocIds = new int[positiveCount];
+		for (int i = 0; i < positiveCount; i++) {
+			positiveDocIds[i] = Integer.parseInt(positiveDocArr[i]);
+				//documentIndex.getDocumentId(positiveDocArr[i]);
+		}
+		
+		// get total number of tokens in positive documents
+		double positiveDocLength = 0;
+		for (int i = 0; i < positiveCount; i++){
+			positiveDocLength += documentIndex.getDocumentLength(positiveDocIds[i]);
+		}
+
+		
+		ExpansionTerms positiveCandidateTerms = new ExpansionTerms(collStats, positiveDocLength, lexicon);
+		// get all terms in positive documents as candidate expansion terms
+		// for each positive feedback document
+		for (int i = 0; i < positiveCount; i++) {
+			int[][] terms = directIndex.getTerms(positiveDocIds[i]);
+			if (terms == null) {
+				logger.warn("document "+documentIndex.getDocumentLength(positiveDocIds[i]) + "("+positiveDocIds[i]+") not found");
+			}
+			else {
+				// for each term in the document
+				for (int j = 0; j < terms[0].length; j++) {
+					// add term id, term frequency to the list of candidate expansion terms
+					positiveCandidateTerms.insertTerm(terms[0][j], (double)terms[1][j]);
+				}
+			}
+		}
+		
+		System.out.println("# UNIQUE TERMS IN POSITIVE DOCS: " + positiveCandidateTerms.getNumberOfUniqueTerms());
+		
+		// mark original query terms in the set of candidate expansion terms
+		positiveCandidateTerms.setOriginalQueryTerms(query);
+		// get list of all candidate expansion terms in positive documents with their respective expansion weights
+		THashMap<Integer, ExpansionTerm> positiveQueryTerms = positiveCandidateTerms.getExpandedTermHashSet(positiveCandidateTerms.getNumberOfUniqueTerms(), QEModel);
+
+		// --------------------------------------------------------------------
+		// COMPUTATION OF NEGATIVE WEIGHTS ------------------------------------
+		// --------------------------------------------------------------------
+		
+		// get ids of negative feedback documents
+		int[] negativeDocIds = new int[negativeCount];
+		for (int i = 0; i < negativeCount; i++) {
+			negativeDocIds[i] = Integer.parseInt(negativeDocArr[i]);
+				//documentIndex.getDocumentId(negativeDocArr[i]);
+		}
+		
+		// get total number of tokens in negative documents
+		double negativeDocLength = 0;
+		for (int i = 0; i < negativeCount; i++){
+				negativeDocLength += documentIndex.getDocumentLength(negativeDocIds[i]);
+		}
+
+		
+		ExpansionTerms negativeCandidateTerms = new ExpansionTerms(collStats, negativeDocLength, lexicon);
+		// get all terms in negative documents as candidate expansion terms
+		// for each negative feedback document
+		for (int i = 0; i < negativeCount; i++) {
+			int[][] terms = directIndex.getTerms(negativeDocIds[i]);
+			if (terms == null) {
+				logger.warn("document "+documentIndex.getDocumentLength(negativeDocIds[i]) + "("+negativeDocIds[i]+") not found");
+			}
+			else {
+				// for each term in the document
+				for (int j = 0; j < terms[0].length; j++) {
+					// add term id, term frequency to the list of candidate expansion terms
+					negativeCandidateTerms.insertTerm(terms[0][j], (double)terms[1][j]);
+				}
+			}
+		}
+		
+		System.out.println("# UNIQUE TERMS IN NEGATIVE DOCS: " + negativeCandidateTerms.getNumberOfUniqueTerms());
+		
+		// mark original query terms in the set of candidate expansion terms
+		negativeCandidateTerms.setOriginalQueryTerms(query);
+		// get list of all candidate expansion terms in negative documents with their respective expansion weights
+		THashMap<Integer, ExpansionTerm> negativeQueryTerms = negativeCandidateTerms.getExpandedTermHashSet(negativeCandidateTerms.getNumberOfUniqueTerms(), QEModel);
+		
+		
+		// --------------------------------------------------------------------
+		// COMBINED WEIGHTS ---------------------------------------------------
+		// --------------------------------------------------------------------
+		
+		// temporary structure for merging positiveQueryTerms and negativeQueryTerms
+		 
+		THashMap<Integer, ExpansionTerm> queryTerms = new THashMap<Integer, ExpansionTerm>();
+		
+		// put all positive query term ids
+		for (Integer k : positiveQueryTerms.keySet()) {
+			queryTerms.put(k, null);
+		}
+		// put all negative query term ids
+		for (Integer k : negativeQueryTerms.keySet()) {
+			queryTerms.put(k, null);
+		}
+		
+		System.out.println("# UNIQUE TERMS IN ALL DOCS: " + queryTerms.size());
+		
+		
+		for (Integer k : positiveCandidateTerms.keySet()) {	
+			lexicon.findTerm(k);
+			double queWeight = query.getTermWeight(lexicon.getTerm());
+			double posWeight = positiveQueryTerms.contains(k) ? positiveQueryTerms.get(k).getWeightExpansion() : 0;
+			double negWeight = negativeQueryTerms.contains(k) ? negativeQueryTerms.get(k).getWeightExpansion() : 0;
+			
+//			lexicon.findTerm(k);
+//			if (lexicon.getTerm().startsWith("positivemark") || lexicon.getTerm().startsWith("negativemark") || lexicon.getTerm().startsWith("mixedmark")) {
+//				System.out.println("WEIGHT FOR " + lexicon.getTerm() + " = " + alpha + "*" + queWeight + " + " + beta + "*" + posWeight + " - " + gamma + "*" + negWeight + " = " + (alpha * queWeight + beta * posWeight - gamma * negWeight));
+//				System.out.println(positiveQueryTerms.contains(k) + " - " + negativeQueryTerms.contains(k));
+//			}
+			
+			ExpansionTerm t = positiveCandidateTerms.new ExpansionTerm(k);
+			t.setWeightExpansion(alpha * queWeight + beta * posWeight + gamma * negWeight);
+			positiveCandidateTerms.put(k, t);
+		}
+
+		for (Integer k : negativeCandidateTerms.keySet()) {
+                        lexicon.findTerm(k);
+                        double queWeight = query.getTermWeight(lexicon.getTerm());
+                        double posWeight = positiveQueryTerms.contains(k) ? positiveQueryTerms.get(k).getWeightExpansion() : 0;
+                        double negWeight = negativeQueryTerms.contains(k) ? negativeQueryTerms.get(k).getWeightExpansion() : 0;
+
+//                      lexicon.findTerm(k);
+//                      if (lexicon.getTerm().startsWith("positivemark") || lexicon.getTerm().startsWith("negativemark") || lexicon.getTerm().
+startsWith("mixedmark")) {
+//                              System.out.println("WEIGHT FOR " + lexicon.getTerm() + " = " + alpha + "*" + queWeight + " + " + beta + "*" +
+posWeight + " - " + gamma + "*" + negWeight + " = " + (alpha * queWeight + beta * posWeight - gamma * negWeight));
+//                              System.out.println(positiveQueryTerms.contains(k) + " - " + negativeQueryTerms.contains(k));
+//                      }
+
+                        ExpansionTerm t = positiveCandidateTerms.new ExpansionTerm(k);
+                        t.setWeightExpansion(alpha * queWeight + beta * posWeight + gamma * negWeight);
+                        negativeCandidateTerms.put(k, t);
+                }
+		
+		TIntHashSet expandedTermidSet = new TIntHashSet();
+		// get positive terms
+		// convert merging structure into array
+		ExpansionTerm[] termArr = positiveCandidateTerms.values().toArray(new ExpansionTerm[positiveCandidateTerms.size()]);
+		// sort array by expansion weights (ExpansionTerm implements Comparable)
+		Arrays.sort(termArr);
+
+		// for each of the top numberOfTermsToReweight expanded terms
+		int numberOfTermsToReweight = Math.min(ApplicationSetup.ExpansionTerms, termArr.length);
+		for (int i = 0; i < numberOfTermsToReweight; i++){
+			// add final expanded term as a query term
+			lexicon.findTerm(termArr[i].getTermID());
+			expandedTermidSet.add(termArr[i].getTermID());
+			query.addTermPropertyWeight(lexicon.getTerm(), termArr[i].getWeightExpansion());
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("term " + lexicon.getTerm()
+				 	+ " appears in expanded query with normalised weight: "
+					+ Rounding.toString(query.getTermWeight(lexicon.getTerm()), 4));
+			}
+			
+			System.out.println(">> expanded term " + lexicon.getTerm() + " with weight " + Rounding.toString(termArr[i].getWeightExpansion(), 4));
+		}
+		// get negative terms with (possibly) negative weights
+		// convert merging structure into array
+                ExpansionTerm[] termArr = negativeCandidateTerms.values().toArray(new ExpansionTerm[negativeCandidateTerms.size()]);
+                // sort array by expansion weights (ExpansionTerm implements Comparable)
+                Arrays.sort(termArr);
+
+                // for each of the top numberOfTermsToReweight expanded terms
+		/* GET THE TERMS WITH THE MOST NEGATIVE WEIGHTS? WILL THIS NEGATIVE TERM SET HAVE A SIGNIFICANT IMPACT
+		   ON RETRIEVAL?
+		   ...
+		*/ 
+                int numberOfTermsToReweight = Math.min(ApplicationSetup.ExpansionTerms, termArr.length);
+		int negExpandedCounter = 0;
+		int i = 0;
+                while (negExpandedCounter<numberOfTermsToReweight){
+                        // add final expanded term as a query term
+                        lexicon.findTerm(termArr[i].getTermID());
+                        if (expandedTermidSet.contains(termArr[i].getTermID())){
+				i++; continue;
+			}
+				
+                        query.addTermPropertyWeight(lexicon.getTerm(), termArr[i].getWeightExpansion());
+
+                        if(logger.isDebugEnabled()){
+                                logger.debug("term " + lexicon.getTerm()
+                                        + " appears in expanded query with normalised weight: "
+                                        + Rounding.toString(query.getTermWeight(lexicon.getTerm()), 4));
+                        }
+
+                        System.out.println(">> expanded term " + lexicon.getTerm() + " with weight " + Rounding.toString(termArr[i].getWeightE
+xpansion(), 4));
+			i++; negExpandedCounter++;
+                }
+		
+	}
+
+}
