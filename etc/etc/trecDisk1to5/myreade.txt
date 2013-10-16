@@ -1,0 +1,13 @@
+1. How to index by using shell
+/cygdrive/e/eclipse-java-europa-winter-win32/eclipse/workspace/SIGIR09/test/merged/
+
+	a) first, dump files to be indexed to collection.spec
+	 ./trec_setup.sh ../../SIGIR09/test/merged/
+	b) setup all parameters in terrier.properties
+	c) ./trec_terrier.sh -i -l(add info for language model)
+	d) Retrieval and evaluation for all runs: ./bin/trec_terrier.sh -r ; ./bin/trec_terrier.sh -e
+	
+	e) Query Expansion: ./bin/trec_terrier.sh -r -q -c 1.0 ; ./bin/trec_terrier.sh -e
+	b) batch work: for b in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9; do bin/trec_terrier.sh -r -c $b;
+cygpath -wp `echo /cygdrive/e/IR/Corpus/TREC/topics.CH1-CH28.chinese.new.engl
+ish` > etc/trec.topics.list

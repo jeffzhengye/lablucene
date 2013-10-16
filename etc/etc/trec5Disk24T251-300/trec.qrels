@@ -1,0 +1,15 @@
+#add the qrels files to use for evaluation
+#/media/disk/IR/Corpus/TREC/qrels.1-28.chinese
+#/media/disk/IR/Corpus/TREC/qrels.trec6.29-54.chinese
+
+#/media/disk/IR/Corpus/NTCIR/NTCIR5-Topics-RJ/CLIR5FormalRunRJ_v2/CLIR5FormalRunRJ-C-Rigid.txt
+#/media/disk/IR/Corpus/NTCIR/NTCIR6/NTCIR6-Topics-RJ/CLIR6FormalRunRJ/CLIR6FormalRunRJ-C-Rigid.txt
+
+#/media/disk/IR/Corpus/TREC/Tipster/qrels.trec6.adhoc.part1-5
+/media/disk/IR/Corpus/TREC/Tipster/qrels.251-300.part1-5
+#/media/disk/IR/Corpus/TREC/Tipster/qrel.trec7.adhoc
+#/media/disk/IR/Corpus/TREC/Tipster/qrels.trec8.adhoc.parts1-5
+#/home/yezheng/corpus/TREC/Clueweb09/topics/rf09_phase1/rf09.phase1.qrels
+#/home/yezheng/corpus/CLEF/medical/judgement/qrel_2009_strictNew.txt
+#/home/yezheng/corpus/TREC/Clueweb09/topics/rf09_phase1/rf09.phase1.qrels
+

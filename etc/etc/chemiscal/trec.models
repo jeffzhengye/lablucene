@@ -1,0 +1,19 @@
+#Add the weighting models to use for retrieval
+#The possible values are the following classnames:
+uk.ac.gla.terrier.matching.models.BM25
+#uk.ac.gla.terrier.matching.models.DFR_BM25
+#uk.ac.gla.terrier.matching.models.TF_IDF
+#uk.ac.gla.terrier.matching.models.BB2
+#uk.ac.gla.terrier.matching.models.IFB2
+
+#uk.ac.gla.terrier.matching.models.In_expB2
+
+#uk.ac.gla.terrier.matching.models.In_expC2
+#uk.ac.gla.terrier.matching.models.InL2
+#uk.ac.gla.terrier.matching.models.PL2
+
+#If you enter a not fully-qualified name of a 
+#class, then the default namespace
+#uk.ac.gla.terrier.matching.models is prepended
+#to the class name.
+#uk.ac.gla.terrier.matching.models.InL2

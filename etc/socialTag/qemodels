@@ -1,0 +1,11 @@
+#Add the term weighting models to use for query expansion
+#The possible values are the following classnames:
+uk.ac.gla.terrier.matching.models.queryexpansion.Bo1
+
+#uk.ac.gla.terrier.matching.models.queryexpansion.Bo2
+#uk.ac.gla.terrier.matching.models.queryexpansion.KL
+#If you enter a not fully-qualified name of a 
+#class, then the default namespace
+#uk.ac.gla.terrier.matching.models.queryexpansion
+#is prepended to the class name.
+#uk.ac.gla.terrier.matching.models.queryexpansion.Bo1

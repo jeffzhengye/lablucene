@@ -1,0 +1,11 @@
+#add the topic files to use for querying
+#/media/disk/IR/Corpus/TREC/TopicTerrier/trec5.mon.Terrier
+#/media/disk/IR/Corpus/TREC/TopicTerrier/trec6.mon.Terrier
+
+#/media/disk/IR/Corpus/NTCIR/TerrierTopics/TerrierTopics5.terrier
+/media/disk/IR/Corpus/NTCIR/TerrierTopics/TerrierTopics6.terrier
+
+
+#medical image retrieval 2009
+#/home/yezheng/corpus/CLEF/medical/topics2009.xml
+

@@ -1,0 +1,2 @@
+#add the qrels files to use for evaluation
+/media/disk1/IR/Collection/TopicQrel/genomics/05.genomics.qrels.large.txt

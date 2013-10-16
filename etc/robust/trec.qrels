@@ -1,0 +1,6 @@
+#add the qrels files to use for evaluation
+
+/media/disk1_/IR/Collection/TopicQrel/qrel.trec7.adhoc
+/media/disk1_/IR/Collection/TopicQrel/qrels.trec6.adhoc.part1-5
+/media/disk1_/IR/Collection/TopicQrel/qrels.trec8.adhoc.parts1-5
+#/media/disk1_/Collections/TopicQrel/robust/TREC2005.qrels.txt

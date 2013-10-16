@@ -1,0 +1,7 @@
+#add the topic files to use for querying
+
+./TopicQrel/topics.301-350
+./TopicQrel/topics.351-400
+./TopicQrel/topics.401-450
+
+#/media/disk1_/Collections/TopicQrel/robust/05.50.topics.txt

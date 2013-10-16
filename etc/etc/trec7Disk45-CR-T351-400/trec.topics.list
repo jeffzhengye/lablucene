@@ -1,0 +1,13 @@
+#add the topic files to use for querying
+#/media/disk/IR/Corpus/TREC/TopicTerrier/trec5.mon.Terrier
+#/media/disk/IR/Corpus/TREC/TopicTerrier/trec6.mon.Terrier
+
+#/media/disk/IR/Corpus/NTCIR/TerrierTopics/TerrierTopics5.terrier
+#/media/disk/IR/Corpus/NTCIR/TerrierTopics/TerrierTopics6.terrier
+
+
+#/media/disk/IR/Corpus/TREC/Tipster/topics.301-350.test
+#/media/disk/IR/Corpus/TREC/Tipster/topics.301-350
+#/media/disk/IR/Corpus/TREC/Tipster/topics.251-300
+/media/disk/IR/Corpus/TREC/Tipster/topics.351-400
+#/media/disk/IR/Corpus/TREC/Tipster/topics.401-450

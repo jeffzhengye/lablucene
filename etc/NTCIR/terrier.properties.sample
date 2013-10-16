@@ -1,0 +1,179 @@
+#This file provides some examples of how to set up properties.
+
+#directory names: Alter these if you wish to change the paths of where
+#terrier expects or places files.
+terrier.home=/usr/local/terrier/
+
+#index path - where terrier stores its index
+#terrier.index.path=/usr/local/terrier/var/index/
+
+#etc path - terrier configuration files
+#terrier.etc=/usr/local/terrier/etc/
+
+#share path - files from the distribution terrier uses
+#terrier.share=/usr/local/terrier/share/
+
+
+###################################################################
+#indexing settings:
+###################################################################
+
+
+
+#collection.spec is where a Collection object expects to find information
+#about how it should be initialised. Eg for a TREC collection, its a file
+#containing the list of files it should index.
+collection.spec=/local/collections/WT2G/files.txt
+#default collection.spec is etc/collection.spec
+
+#which collection to use to index?
+trec.collection.class=TRECCollection
+#or if you're indexing nonEnglish collections:
+#trec.collection.class=TRECUTFCollection
+#
+#if you need to save non a-z0-9 character in the index, set
+#string.use_utf=true
+
+#To record term positions (blocks) in the index, set
+#block.indexing=true
+#block indexing can be controlled using several properties:
+#block.size=1 = this property records the accuracy of one block
+#max.blocks - how many blocks to record in a document
+
+
+#If you're using TRECCollection to Index, you should specify the tags that should be indexed:
+#document tags specification
+#for processing the contents of
+#the documents, ignoring DOCHDR
+TrecDocTags.doctag=DOC
+TrecDocTags.idtag=DOCNO
+TrecDocTags.skip=DOCHDR
+#set to false if the tags can be of various case eg DOC and DoC
+TrecDocTags.casesensitive=true
+
+#Terrier has two indexing strategies:
+#classical two-pass and single-pass. Different properies control each
+
+#####################
+#(a) classical two-pass indexing
+#####################
+#control the number of terms to invert at once (defined by # of pointers).
+invertedfile.processpointers=20000000
+#default is less for block indexing
+invertedfile.processpointers=2000000
+#reduce these if you experience OutOfMemory while inverted the direct file
+
+
+####################
+#(b) single-pass indexing
+#####################
+#the properties about single-pass indexing are related to memory consumption:
+#
+#memory.reserved: least amount of memory (MB) before commit a run to disk. Set this too low and
+#an OutOfMemoryError will occur while saving the run. Set this too high and 
+#more runs will be saved, making indexing slower
+memory.reserved=50
+#memory.heap.usage: how much of the heap must be allocated (%) before a run can be committed to disk
+#set this too low and runs will be committed very often, before the java heap has reached full size.
+memory.heap.usage=85
+#docs.checks: how often to check memory consumption. Set this too high and OutOfMemoryError may
+#occur between as memory checks (i.e. {docs.checks} docs may fill {memory.reserved}+1 MB.
+docs.checks=20
+
+#####################################################
+#shared indexing and retrieval settings:
+#####################################################
+#stop-words file, relative paths are assumed to be in terrier.share
+stopwords.filename=stopword-list.txt
+
+
+#the processing stages a term goes through. Following is
+#the default setting:
+termpipelines=Stopwords,PorterStemmer
+#Using the above default setting, the system stops a
+#term and then stem it if it is not a stop-word. If you
+#want to keep all the stop-words and use a weak version of
+#the Porter's stemmer, the setting should be as follows:
+#termpipelines=WeakPorterStemmer
+
+#If you wish to keep all terms unchanged, use
+#termpipelines=
+
+
+#####################################################
+# retrieval controls
+#####################################################
+
+#default controls for query expansion
+querying.postprocesses.order=QueryExpansion
+querying.postprocesses.controls=qe:QueryExpansion
+
+#default and allowed controls
+querying.default.controls=c:1.0,start:0,end:999
+querying.allowed.controls=c,scope,qe,qemodel,start,end
+
+#query tags specification
+
+#TrecQueryTags.doctag stands for the name of tag that marks
+#the start of a TREC topic.
+
+TrecQueryTags.doctag=TOP
+
+#TrecQueryTags.idtag stands for the name of tag that marks 
+#the id of a TREC topic.
+
+TrecQueryTags.idtag=NUM
+
+#TrecQueryTags.process stands for the fields in a TREC 
+#topic to process. TrecQueryTags.skip stands for the fields
+#in a TREC topic to ignore. Following is the default setting:
+
+TrecQueryTags.process=TOP,NUM,TITLE
+TrecQueryTags.skip=DESC,NARR
+
+#Using the above default setting, Terrier processes the titles
+#in a TREC topic, while ignores descriptions and narratives. If
+#you want to run a querying process with description-only 
+#queries, the setting should be:
+
+#TrecQueryTags.process=TOP,NUM,DESC
+#TrecQueryTags.skip=TITLE,NARR
+
+#Note that "TITLE" is in the list of tags to ignore.
+
+
+#Terrier also provides the functionality of pseudo query 
+#expansion. Using the following setting, the query 
+#expansion component extracts the 40 most informative 
+#terms from the 10 top-returned documents
+#in first-pass retrieval as the expanded query terms.
+
+expansion.documents=10
+expansion.terms=40
+
+#If the above two properties are not specified 
+#in terrier.properties, Terrier will use the default 
+#setting which is expansion.documents=3 and 
+#expansion.terms=10.
+
+#Terrier applies a parameter-free query expansion mechanism
+#by default. An alternate approach is the Rocchio's query
+#expansion. To enable the latter, user should set property
+#parameter.free.expansion to false:
+
+#parameter.free.expansion=false
+
+#To set the parameter beta of the Rocchio's query expansion,
+#input rocchio.beta=X in terrier.properties. For example:
+
+#rocchio.beta=0.8
+
+#If rocchio.beta is not specified in terrier.properties, Terrier
+#applies rocchio.beta=0.4 by default.
+
+#indexing.simplefilecollection.extensionsparsers - use this to define parsers for know file extensions
+#indexing.simplefilecollection.extensionsparsers=txt:FileDocument,text:FileDocument,tex:FileDocument,bib:FileDocument, pdf:PDFDocument,html:HTMLDocument,htm:HTMLDocument,xhtml:HTMLDocument, xml:HTMLDocument,doc:MSWordDocument,ppt:MSPowerpointDocument,xls:MSExcelDocument
+
+#indexing.simplefilecollection.defaultparser
+#if this is defined, then terrier will attempt to open any file it doesn't have an explicit parser for with the parser given
+#indexing.simplefilecollection.defaultparser=FileDocument

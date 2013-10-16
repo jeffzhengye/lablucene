@@ -1,0 +1,6 @@
+#add the qrels files to use for evaluation
+/media/disk/IR/Corpus/TREC/qrels.1-28.chinese
+#/media/disk/IR/Corpus/TREC/qrels.trec6.29-54.chinese
+
+#/media/disk/IR/Corpus/NTCIR/NTCIR5-Topics-RJ/CLIR5FormalRunRJ_v2/CLIR5FormalRunRJ-C-Rigid.txt
+#/media/disk/IR/Corpus/NTCIR/NTCIR6/NTCIR6-Topics-RJ/CLIR6FormalRunRJ/CLIR6FormalRunRJ-C-Rigid.txt
