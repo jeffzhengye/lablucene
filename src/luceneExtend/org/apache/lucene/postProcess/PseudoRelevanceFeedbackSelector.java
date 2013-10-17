@@ -94,7 +94,7 @@ public class PseudoRelevanceFeedbackSelector extends FeedbackSelector {
 				}
 
 				// split line into space-separated pieces
-				String[] pieces = line.split("\s+");
+				String[] pieces = line.split("\\s+");
 				// grab topic id
 				String topId = pieces[0];
 				// grab docno

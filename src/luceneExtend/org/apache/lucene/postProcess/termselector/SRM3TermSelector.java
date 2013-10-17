@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.index.TermPositionVector;
 import org.apache.lucene.postProcess.QueryExpansionModel;
+import org.apache.lucene.postProcess.termselector.RM3TermSelector;
+import org.apache.lucene.postProcess.termselector.TermSelector;
 import org.apache.lucene.search.model.Idf;
 
 import org.dutir.lucene.util.ApplicationSetup;
@@ -24,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import gnu.trove.TObjectFloatHashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,7 +46,9 @@ public class SRM3TermSelector extends TermSelector {
 	private static Logger logger = Logger.getLogger(RM3TermSelector.class);
 //	private float lambda = Float.parseFloat(ApplicationSetup.getProperty(
 //			"expansion.lavrenko.lambda", "0.15"));
-
+	private static String urlsim = ApplicationSetup.getProperty(
+			"srm3.urlsim", "http://10.7.10.219:5000/sim");
+	
 	class Structure {
 		/**
 		 * document level LM score (dir smoothing) for each candidate word in docs. 
@@ -181,7 +186,22 @@ public class SRM3TermSelector extends TermSelector {
 		indriNorm(PQ);
 		
 		//*****************************compute semantic scores***************************************
-		
+		String qstr = "";
+		for(String term : originalQueryTermidSet){
+			if( qstr.equals("") ){
+				qstr += term;
+			}else{
+				qstr += ":" + term;
+			}		
+		}
+		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
+		float t_semscore = 0;
+		for (String term : tmpSet) {
+			float s = sim(qstr, term);
+			sem_map.put(term, s); // it's original score, not normalized
+			t_semscore += s;      //to be used.
+		}
+//		indriNorm();
 		//******************************************************************************************
 		
 		int termNum = map.size();
@@ -197,7 +217,7 @@ public class SRM3TermSelector extends TermSelector {
 			Structure ws = entry.getValue();
 			float weight = 0;
 			for (int i = 0; i < ws.wordDoc.length; i++) {
-				weight += PD[i] * ws.wordDoc[i] * PQ[i];
+				weight += PD[i] * ws.wordDoc[i] * (PQ[i] + sem_map.get(w));
 			}
 
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) {
@@ -273,10 +293,10 @@ public class SRM3TermSelector extends TermSelector {
 	}
 
 	
-	HttpClient httpclient = new DefaultHttpClient();
-	HttpPost httppost = new HttpPost("http://127.0.0.1:5000/sim");
+	static HttpClient httpclient = new DefaultHttpClient();
+	static HttpPost httppost = new HttpPost(urlsim);
 
-	protected float sim(String t1, String t2){
+	static protected float sim(String t1, String t2){
 		try{
 			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
 			params.add(new BasicNameValuePair("t1", t1));
@@ -323,5 +343,9 @@ public class SRM3TermSelector extends TermSelector {
 			TermPositionVector[] tfvs, QueryExpansionModel QEModel) {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	public static void main(String[] args){
+		float score = sim("good", "nice");
+		System.out.print(score);
+	}
 }
