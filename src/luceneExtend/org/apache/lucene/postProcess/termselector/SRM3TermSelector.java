@@ -33,9 +33,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 /**
  * @author zheng
@@ -44,8 +51,8 @@ import org.apache.http.message.BasicNameValuePair;
 public class SRM3TermSelector extends TermSelector {
 
 	private static Logger logger = Logger.getLogger(RM3TermSelector.class);
-//	private float lambda = Float.parseFloat(ApplicationSetup.getProperty(
-//			"expansion.lavrenko.lambda", "0.15"));
+	private float alpha = Float.parseFloat(ApplicationSetup.getProperty(
+			"srm3.alpha", "0.5"));
 	private static String urlsim = ApplicationSetup.getProperty(
 			"srm3.urlsim", "http://10.7.10.219:5000/sim");
 	
@@ -216,8 +223,9 @@ public class SRM3TermSelector extends TermSelector {
 			String w = entry.getKey();
 			Structure ws = entry.getValue();
 			float weight = 0;
+			float alpha = 0;
 			for (int i = 0; i < ws.wordDoc.length; i++) {
-				weight += PD[i] * ws.wordDoc[i] * (PQ[i] + sem_map.get(w));
+				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w));
 			}
 
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) {
@@ -293,21 +301,31 @@ public class SRM3TermSelector extends TermSelector {
 	}
 
 	
-	static HttpClient httpclient = new DefaultHttpClient();
-//	static HttpPost httppost = new HttpPost(urlsim);
+	static PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+	static CloseableHttpClient httpclient;
+    static {
+    	cm.setMaxTotal(100);
+    	httpclient = HttpClients.custom().setConnectionManager(cm).build();
+    }
+    
+
+     
 
 	static protected float sim(String t1, String t2){
 		try{
+//			CloseableHttpClient httpclient = HttpClients.createDefault();
 			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
 			params.add(new BasicNameValuePair("t1", t1));
 			params.add(new BasicNameValuePair("t2", t2));
 			HttpPost httppost = new HttpPost(urlsim);
 			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-
+			HttpContext context = new BasicHttpContext();
+			
+//			HttpGet httpget = new HttpGet(urisToGet[i]);
 			//Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
+			CloseableHttpResponse response = httpclient.execute(httppost, context);
 			HttpEntity entity = response.getEntity();
-
+			
 			if (entity != null) {
 			    InputStream instream = entity.getContent();
 			    try {
@@ -319,8 +337,10 @@ public class SRM3TermSelector extends TermSelector {
 			        return Float.parseFloat(new String(cbuf, 0, len));
 			    } finally {
 			        instream.close();
+			        response.close();
 			    }
 			}
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
