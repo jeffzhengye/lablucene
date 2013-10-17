@@ -142,12 +142,12 @@ public class TRECQuerying {
 		String fieldstr = ApplicationSetup.getProperty("Lucene.SearchField",
 				"title,content");
 
-		this.searchFeilds = fieldstr.split("\s*,\s*");
+		this.searchFeilds = fieldstr.split("\\s*,\\s*");
 		analyzer = AnalyzerManager.getFromPropertyFile();
 
 		String postProcess = ApplicationSetup.getProperty("Lucene.PostProcess",
 				"");
-		String postProcesses[] = postProcess.split("\s*,\s*");
+		String postProcesses[] = postProcess.split("\\s*,\\s*");
 		this.searcher = ISManager.getSearcheFromPropertyFile();
 
 		for (int i = 0; i < postProcesses.length; i++) {
@@ -327,14 +327,11 @@ public class TRECQuerying {
 			PrintWriter settingWriter = new PrintWriter(new BufferedWriter(
 					new FileWriter(new File(settingFileName))));
 			settingWriter
-					.write("Retrieval Paras: " + this.retrievalPara + "
-");
-			settingWriter.write("*****************************************
-");
+					.write("Retrieval Paras: " + this.retrievalPara + "\n");
+			settingWriter.write("*****************************************\n");
 			list(settingWriter, ApplicationSetup.getProperties());
 			settingWriter
-					.write("******************System Properties***********************
-");
+					.write("******************System Properties***********************\n");
 			list(settingWriter, System.getProperties());
 			settingWriter.close();
 			if (logger.isInfoEnabled())
@@ -443,14 +440,14 @@ public class TRECQuerying {
 		String feedbackname = ApplicationSetup.getProperty(
 				"Rocchio.Feedback.filename", "");
 		if (feedbackname.matches(ApplicationSetup.TREC_RESULTS + "/" + prefix
-				+ "_[0-9]{1,5}\.gz"))
+				+ "_[0-9]{1,5}\\.gz"))
 			return;
 
 		File resultDir = new File(ApplicationSetup.TREC_RESULTS);
 		String[] filenames = resultDir.list(gzfilter);
 		boolean tag = false;
 		for (int i = 0; filenames !=null && i < filenames.length; i++) {
-			if (filenames[i].matches(prefix + "_[0-9]{1,5}\.gz")) {
+			if (filenames[i].matches(prefix + "_[0-9]{1,5}\\.gz")) {
 				ApplicationSetup.setProperty("Rocchio.Feedback.filename",
 						ApplicationSetup.TREC_RESULTS + "/" + filenames[i]);
 				if (logger.isInfoEnabled() && !firstRound)
@@ -469,7 +466,7 @@ public class TRECQuerying {
 
 	static class GZFilter implements FilenameFilter {
 		public boolean accept(File arg0, String arg1) {
-			if (arg1.endsWith("\.gz"))
+			if (arg1.endsWith("\\.gz"))
 				;
 			return true;
 		}

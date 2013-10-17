@@ -153,8 +153,7 @@ public class AdhocEvaluation extends Evaluation {
 	}
 	
 	public void evaluateStr(String content){
-		String lines[] = content.split("
-");
+		String lines[] = content.split("\n");
 		evaluate(lines);
 	}
 	

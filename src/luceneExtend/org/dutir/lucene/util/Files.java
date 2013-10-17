@@ -142,12 +142,12 @@ public class Files
 	/** initialise the transformations from Application property */
 	protected static void intialise_transformations()
 	{
-		final String[] transforms = ApplicationSetup.getProperty("files.transforms","").split("\s*,\s*");
+		final String[] transforms = ApplicationSetup.getProperty("files.transforms","").split("\\s*,\\s*");
 		for(String transform: transforms)
 		{
 			if (transform.length() == 0)
 				continue;
-			String parts[] = transform.split("\s*>\s*");
+			String parts[] = transform.split("\\s*>\\s*");
 			addPathTransormation(parts[0], parts[1]);
 		}
 	}
@@ -183,7 +183,7 @@ public class Files
 	protected static FileSystem getFileSystem(String filename)
 	{
 		//check to see if filename is in a URI form
-		if (! filename.matches("^\w+:.*$"))
+		if (! filename.matches("^\\w+:.*$"))
 			return fileSystems.get(DEFAULT_SCHEME);
 		//identify scheme component of filename
 		final int colonPos = filename.indexOf(":"); 
@@ -316,8 +316,7 @@ public class Files
 		final FileSystem fs = getFileSystem(path);
 		if (fs == null)
 			return false;
-		//System.err.printf("Cap: %d Stat: %d check: %d
-", fs.capabilities() , FSCapability.STAT, (fs.capabilities() & FSCapability.STAT));
+		//System.err.printf("Cap: %d Stat: %d check: %d", fs.capabilities() , FSCapability.STAT, (fs.capabilities() & FSCapability.STAT));
 		if ((fs.capabilities() & FSCapability.STAT) == 0)
 			return true;
 		try{

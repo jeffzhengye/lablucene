@@ -802,7 +802,7 @@ public class ApplicationSetup {
 	protected static void setupPlugins() {
 		loadedPlugins = new LinkedList<TerrierApplicationPlugin>();
 		final String[] pluginNames = getProperty("terrier.plugins", "").split(
-				"\s*,\s*");
+				"\\s*,\\s*");
 		for (String pluginName : pluginNames) {
 			if (pluginName.length() == 0)
 				continue;
@@ -844,7 +844,7 @@ public class ApplicationSetup {
 			return null;
 		if (filename.length() == 0)
 			return filename;
-		if (filename.matches("^\w+:.*"))
+		if (filename.matches("^\\w+:.*"))
 			return filename;
 		if (new File(filename).isAbsolute())
 			return filename;
