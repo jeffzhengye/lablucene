@@ -223,7 +223,6 @@ public class SRM3TermSelector extends TermSelector {
 			String w = entry.getKey();
 			Structure ws = entry.getValue();
 			float weight = 0;
-			float alpha = 0;
 			for (int i = 0; i < ws.wordDoc.length; i++) {
 				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w));
 			}
@@ -355,8 +354,7 @@ public class SRM3TermSelector extends TermSelector {
 	 */
 	@Override
 	public String getInfo() {
-		// TODO Auto-generated method stub
-		return "SRM3";
+		return "SRM3alpha=" + alpha;
 	}
 
 	@Override
