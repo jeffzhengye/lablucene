@@ -294,13 +294,14 @@ public class SRM3TermSelector extends TermSelector {
 
 	
 	static HttpClient httpclient = new DefaultHttpClient();
-	static HttpPost httppost = new HttpPost(urlsim);
+//	static HttpPost httppost = new HttpPost(urlsim);
 
 	static protected float sim(String t1, String t2){
 		try{
 			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
 			params.add(new BasicNameValuePair("t1", t1));
 			params.add(new BasicNameValuePair("t2", t2));
+			HttpPost httppost = new HttpPost(urlsim);
 			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
 			//Execute and get the response.
