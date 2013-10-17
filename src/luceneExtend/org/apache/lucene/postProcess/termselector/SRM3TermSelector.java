@@ -303,7 +303,7 @@ public class SRM3TermSelector extends TermSelector {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1f;
+		return -10f;
 	}
 	// Request parameters and other properties.
 
