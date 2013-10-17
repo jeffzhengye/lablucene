@@ -28,8 +28,8 @@
 
 <!-- log4j.rootLogger=debug, stdout, R -->
  <root>
-  <priority value="warn" />
-  <appender-ref ref="rfile" />
+  <priority value="debug" />
+  <appender-ref ref="console" />
  </root>
  
 </log4j:configuration>

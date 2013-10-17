@@ -77,7 +77,7 @@ public class GeneralAnalyzer extends Analyzer {
 
 	public static void main(String args[]) throws IOException {
 
-		String s = "#redbossfan (2) why I've didn't mentioned this & that";
+		String s = "gps information #redbossfan (2) apples why I've didn't mentioned this & that";
 		Reader reader = new StringReader(s);
 		Analyzer analyzer = AnalyzerManager.getFromPropertyFile();
 		TokenStream ts = analyzer.tokenStream("", reader);

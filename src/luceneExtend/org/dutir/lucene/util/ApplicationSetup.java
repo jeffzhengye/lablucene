@@ -527,7 +527,7 @@ public class ApplicationSetup {
 							+ FILE_SEPARATOR + "lucene.properties";
 
 			} else {
-				lucene_home = System.getProperty("lucene.home", "");
+				lucene_home = System.getProperty("lucene.home", "./");
 				propertiesFile = System.getProperty("lucene.setup",
 						lucene_home + FILE_SEPARATOR + "etc" + FILE_SEPARATOR
 								+ "lucene.properties");
@@ -535,7 +535,7 @@ public class ApplicationSetup {
 				
 			}
 
-			// System.err.println("Properties file is "+propertiesFile);
+//			 System.err.println("Properties file is "+propertiesFile);
 			LUCENE_HOME = getProperty("lucene.home", lucene_home);
 			FileInputStream in = new FileInputStream(propertiesFile);
 			configure(new BufferedInputStream(in));
