@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JDialog;
+
 import gnu.trove.TObjectFloatHashMap;
 
 import org.apache.http.HttpEntity;
@@ -44,6 +47,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import redis.clients.jedis.Jedis;
+
 /**
  * @author zheng
  * 
@@ -55,6 +60,7 @@ public class SRM3TermSelector extends TermSelector {
 			"srm3.alpha", "0.5"));
 	private static String urlsim = ApplicationSetup.getProperty(
 			"srm3.urlsim", "http://10.7.10.219:5000/sim");
+	static Jedis jedis = new Jedis("127.0.0.1", 6379, 100000); // zheng's
 	
 	class Structure {
 		/**
@@ -224,7 +230,7 @@ public class SRM3TermSelector extends TermSelector {
 			Structure ws = entry.getValue();
 			float weight = 0;
 			for (int i = 0; i < ws.wordDoc.length; i++) {
-				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w));
+				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
 			}
 
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) {
@@ -308,11 +314,16 @@ public class SRM3TermSelector extends TermSelector {
     }
     
 
-     
+     static  private String torediskey(String t1, String t2){
+    	 return ApplicationSetup.LUCENE_ETC +"|" + t1 + "|" + t2;
+     }
 
 	static protected float sim(String t1, String t2){
 		try{
-//			CloseableHttpClient httpclient = HttpClients.createDefault();
+			String key = torediskey(t1, t2);
+			String value = jedis.get(key);
+			if(value != null) return Float.parseFloat(value);
+			
 			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
 			params.add(new BasicNameValuePair("t1", t1));
 			params.add(new BasicNameValuePair("t2", t2));
@@ -333,7 +344,9 @@ public class SRM3TermSelector extends TermSelector {
 			        char cbuf[] = new char[30];
 			        int len = ir.read(cbuf);
 //			        System.out.print(new String(cbuf, 0, len));
-			        return Float.parseFloat(new String(cbuf, 0, len));
+			        String str_ret = new String(cbuf, 0, len);
+			        jedis.set(key, str_ret);
+			        return Float.parseFloat(str_ret);
 			    } finally {
 			        instream.close();
 			        response.close();
