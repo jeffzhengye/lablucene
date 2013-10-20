@@ -207,13 +207,14 @@ public class SRM3TermSelector extends TermSelector {
 				qstr += ":" + term;
 			}		
 		}
-		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
-		float t_semscore = 0;
-		for (String term : tmpSet) {
-			float s = sim(qstr, term);
-			sem_map.put(term, s); // it's original score, not normalized
-			t_semscore += s;      //to be used.
-		}
+//		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
+//		float t_semscore = 0;
+//		for (String term : tmpSet) {
+//			float s = sim(qstr, term);
+//			sem_map.put(term, s); // it's original score, not normalized
+//			t_semscore += s;      //to be used.
+//		}
+		
 //		indriNorm();
 		//******************************************************************************************
 		
@@ -229,12 +230,14 @@ public class SRM3TermSelector extends TermSelector {
 			String w = entry.getKey();
 			Structure ws = entry.getValue();
 			float weight = 0;
-			for (int i = 0; i < ws.wordDoc.length; i++) {
-				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
-			}
 
-			if (ws.df < EXPANSION_MIN_DOCUMENTS) {
+			if (ws.df < EXPANSION_MIN_DOCUMENTS || ws.ctf < 5) {
 				weight = 0;
+			}else{
+				for (int i = 0; i < ws.wordDoc.length; i++) {
+//					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
+					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
+				}
 			}
 
 			total += weight;

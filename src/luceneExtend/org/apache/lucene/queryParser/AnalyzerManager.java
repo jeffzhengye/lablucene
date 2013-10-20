@@ -55,7 +55,7 @@ public class AnalyzerManager {
 	public static void main(String[] args) throws Exception {
 //		System.setProperty("lucene.home", value)
 		Analyzer ana = getFromPropertyFile();
-		String text = "information gps apples R&D Europe's zwischenbilanz 0038z wis GOOG goods 0-0.005Mg,0,1 adb-cde silicon-bonded MK-0431 02Cu5 3-hydroxy-w-cyclohexylalkanoic butan-2-amine";
+		String text = "information distingish injection injector inject krasnoselskii gps apples R&D Europe's zwischenbilanz 0038z wis GOOG goods 0-0.005Mg,0,1 adb-cde silicon-bonded MK-0431 02Cu5 3-hydroxy-w-cyclohexylalkanoic butan-2-amine";
 //		text = "s12s china is gooddestmansileddddddd eakin@ogp.noaa.gov 0000";
 		StringReader  reader = new StringReader(text);
 		TokenStream ts = ana.tokenStream("", reader);
