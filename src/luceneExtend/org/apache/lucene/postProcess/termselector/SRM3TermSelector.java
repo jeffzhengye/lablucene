@@ -230,7 +230,8 @@ public class SRM3TermSelector extends TermSelector {
 			Structure ws = entry.getValue();
 			float weight = 0;
 			for (int i = 0; i < ws.wordDoc.length; i++) {
-				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
+//				weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
+				weight += PD[i] * ws.wordDoc[i];
 			}
 
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) {
