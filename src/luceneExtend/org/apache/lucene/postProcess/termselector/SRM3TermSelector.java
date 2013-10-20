@@ -237,7 +237,8 @@ public class SRM3TermSelector extends TermSelector {
 				for (int i = 0; i < ws.wordDoc.length; i++) {
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
-					weight += PD[i] * ws.wordDoc[i];
+					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
+//					weight += PD[i] * ws.wordDoc[i];
 				}
 			}
 
