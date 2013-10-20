@@ -374,7 +374,7 @@ public class SRM3TermSelector extends TermSelector {
 	 */
 	@Override
 	public String getInfo() {
-		return "SRM3alpha=" + alpha;
+		return "pureSRM3alpha=" + alpha;
 	}
 
 	@Override
