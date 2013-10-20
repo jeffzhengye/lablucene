@@ -239,6 +239,7 @@ public class SRM3TermSelector extends TermSelector {
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
 					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
 //					weight += PD[i] * ws.wordDoc[i];
+					
 				}
 			}
 
