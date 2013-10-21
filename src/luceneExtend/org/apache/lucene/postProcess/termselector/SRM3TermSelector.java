@@ -286,7 +286,7 @@ public class SRM3TermSelector extends TermSelector {
 //			exTerms[pos].setWeightExpansion(exTerms[pos].getWeightExpansion() / sum);
 			String w = exTerms[pos].getTerm();
 			exTerms[pos].setWeightExpansion(alpha* exTerms[pos].getWeightExpansion() / sum 
-					+ (1-alpha)*sem_map.get(w) );
+					+ (1-alpha)*sem_map.get(w)/sum1 );
 			this.termMap.put(w, exTerms[pos]);
 		}
 
