@@ -326,6 +326,7 @@ public class SRM3TermSelector extends TermSelector {
 		}
 		
 		float gap = max - min;
+		System.out.print(max + ":" + min + ":" + gap);
 		Object[] keys = map.keys();
 		for (int i=0; i < keys.length; i++) {
 			String key = (String) keys[i];
