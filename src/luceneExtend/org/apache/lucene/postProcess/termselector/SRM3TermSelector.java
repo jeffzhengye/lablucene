@@ -231,7 +231,7 @@ public class SRM3TermSelector extends TermSelector {
 			Structure ws = entry.getValue();
 			float weight = 0;
 
-			if (ws.df < EXPANSION_MIN_DOCUMENTS || ws.ctf < 5) {
+			if (ws.df < EXPANSION_MIN_DOCUMENTS) { //|| ws.ctf < 5
 				weight = 0;
 			}else{
 				float sem_score = sim(qstr, w);
@@ -240,7 +240,10 @@ public class SRM3TermSelector extends TermSelector {
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
 //					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
 //					weight += PD[i] * ws.wordDoc[i];
-					weight += PD[i] * sem_score * PQ[i];
+//					weight += PD[i] * sem_score * PQ[i];
+					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
+					
+//					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
 				}
 			}
 
@@ -374,7 +377,8 @@ public class SRM3TermSelector extends TermSelector {
 	 */
 	@Override
 	public String getInfo() {
-		return "pureSRM3alpha=" + alpha;
+//		return "combinedSRM3alpha=" + alpha;
+		return "originalRM3alpha=" + alpha;
 	}
 
 	@Override
