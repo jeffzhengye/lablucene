@@ -222,14 +222,14 @@ public class SRM3TermSelector extends TermSelector {
 		// **************RM1 -- Indri implementation********************** //
 		float total = 0;
 		pos = 0;
-		float sum = 0;
+		float sum = 0, sum1 =0;
 		for (Entry<String, Structure> entry : map.entrySet()) {
 			String w = entry.getKey();
 			Structure ws = entry.getValue();
-			float weight = 0;
+			float weight = 0, weight1 =0;
 
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) { //|| ws.ctf < 5
-				weight = 0;
+				weight = 0; weight1 = 0;
 			}else{
 //				float sem_score = sim(qstr, w);
 				float sem_score = sem_map.get(w);
@@ -239,18 +239,19 @@ public class SRM3TermSelector extends TermSelector {
 //					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
 //					weight += PD[i] * ws.wordDoc[i];
 //					weight += PD[i] * sem_score * PQ[i];
-					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
+					weight1 += PD[i] * sem_score *PQ[i];
 					
-//					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
+					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
 				}
 			}
-
-			total += weight;
-
+			
 			exTerms[pos] = new ExpansionTerm(w, 0);
 			exTerms[pos].setWeightExpansion(weight);
 			pos++;
 			sum += weight;
+			
+			sem_map.put(w, weight);
+			sum1 += weight1;
 		}
 
 		termNum = pos;
@@ -282,8 +283,11 @@ public class SRM3TermSelector extends TermSelector {
 							.getTerm())) {
 				buf.append(exTerms[pos] + "\t");
 			}
-			exTerms[pos].setWeightExpansion(exTerms[pos].getWeightExpansion() / sum);
-			this.termMap.put(exTerms[pos].getTerm(), exTerms[pos]);
+//			exTerms[pos].setWeightExpansion(exTerms[pos].getWeightExpansion() / sum);
+			String w = exTerms[pos].getTerm();
+			exTerms[pos].setWeightExpansion(alpha* exTerms[pos].getWeightExpansion() / sum 
+					+ (1-alpha)*sem_map.get(w) );
+			this.termMap.put(w, exTerms[pos]);
 		}
 
 		if (logger.isDebugEnabled()) {
