@@ -250,7 +250,7 @@ public class SRM3TermSelector extends TermSelector {
 			pos++;
 			sum += weight;
 			
-			sem_map.put(w, weight);
+			sem_map.put(w, weight1);
 			sum1 += weight1;
 		}
 
