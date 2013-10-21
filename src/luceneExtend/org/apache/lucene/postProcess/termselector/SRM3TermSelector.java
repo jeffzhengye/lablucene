@@ -207,15 +207,12 @@ public class SRM3TermSelector extends TermSelector {
 				qstr += ":" + term;
 			}		
 		}
-//		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
-//		float t_semscore = 0;
-//		for (String term : tmpSet) {
-//			float s = sim(qstr, term);
-//			sem_map.put(term, s); // it's original score, not normalized
-//			t_semscore += s;      //to be used.
-//		}
-		
-//		indriNorm();
+		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
+		for (String term : tmpSet) {
+			float s = sim(qstr, term);
+			sem_map.put(term, s); // it's original score, not normalized
+		}
+		max_min_norm(sem_map);
 		//******************************************************************************************
 		
 		int termNum = map.size();
@@ -234,7 +231,8 @@ public class SRM3TermSelector extends TermSelector {
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) { //|| ws.ctf < 5
 				weight = 0;
 			}else{
-				float sem_score = sim(qstr, w);
+//				float sem_score = sim(qstr, w);
+				float sem_score = sem_map.get(w);
 				for (int i = 0; i < ws.wordDoc.length; i++) {
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
@@ -312,6 +310,27 @@ public class SRM3TermSelector extends TermSelector {
 		}
 		for (int i=0; i < pQ.length; i++) {
 			 pQ[i] /= sum;
+		}
+	}
+	
+	private void max_min_norm(TObjectFloatHashMap<String> map) {
+		float values[] = map.getValues();
+		float max = Float.POSITIVE_INFINITY;
+		float min = Float.NEGATIVE_INFINITY;
+		for (int i=0; i < values.length; i++) {
+			if(values[i] < min){
+				min = values[i];
+			}else if(values[i] > max){
+				max = values[i];
+			}
+		}
+		
+		float gap = max - min;
+		Object[] keys = map.keys();
+		for (int i=0; i < keys.length; i++) {
+			String key = (String) keys[i];
+			float value = map.get(key);
+			map.put(key, (value -min) /gap);
 		}
 	}
 
