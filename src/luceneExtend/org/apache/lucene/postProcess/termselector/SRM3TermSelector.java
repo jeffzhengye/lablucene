@@ -234,16 +234,16 @@ public class SRM3TermSelector extends TermSelector {
 			if (ws.df < EXPANSION_MIN_DOCUMENTS) { //|| ws.ctf < 5
 				weight = 0;
 			}else{
-				float sem_score = sim(qstr, w);
+//				float sem_score = sim(qstr, w);
 				for (int i = 0; i < ws.wordDoc.length; i++) {
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sem_map.get(w)/t_semscore);
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
 //					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
 //					weight += PD[i] * ws.wordDoc[i];
 //					weight += PD[i] * sem_score * PQ[i];
-					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
+//					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
 					
-//					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
+					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
 				}
 			}
 
