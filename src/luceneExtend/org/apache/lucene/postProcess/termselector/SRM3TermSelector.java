@@ -239,9 +239,9 @@ public class SRM3TermSelector extends TermSelector {
 //					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
 //					weight += PD[i] * ws.wordDoc[i];
 //					weight += PD[i] * sem_score * PQ[i];
-					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
+//					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
 					
-//					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
+					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
 				}
 			}
 
@@ -396,8 +396,8 @@ public class SRM3TermSelector extends TermSelector {
 	 */
 	@Override
 	public String getInfo() {
-//		return "combinedSRM3alpha=" + alpha;
-		return "original_by_alpha=1RM3alpha=" + alpha;
+		return "combinedSRM3alpha=" + alpha;
+//		return "original_by_alpha=1RM3alpha=" + alpha;
 	}
 
 	@Override
