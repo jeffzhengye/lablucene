@@ -210,7 +210,7 @@ public class SRM3TermSelector extends TermSelector {
 		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
 		for (String term : tmpSet) {
 			float s = sim(qstr, term);
-			sem_map.put(term, s); // it's original score, not normalized
+			sem_map.put(term, s); // it's original score, not normalised
 		}
 		max_min_norm(sem_map);
 		//******************************************************************************************
