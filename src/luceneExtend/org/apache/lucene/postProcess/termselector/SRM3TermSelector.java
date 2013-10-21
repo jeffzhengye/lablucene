@@ -238,8 +238,8 @@ public class SRM3TermSelector extends TermSelector {
 //					weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] + (1-alpha)*sim(qstr, w));
 //					weight += PD[i] * ws.wordDoc[i] * sim(qstr, w);
 //					weight += PD[i] * ws.wordDoc[i];
-					weight += PD[i] * sem_score * PQ[i];
-//					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
+//					weight += PD[i] * sem_score * PQ[i];
+					weight += PD[i] * (alpha*ws.wordDoc[i] + (1-alpha) * sem_score)*PQ[i];
 					
 //					weight += PD[i] * ws.wordDoc[i] * PQ[i]; //original RM3
 				}
@@ -315,8 +315,8 @@ public class SRM3TermSelector extends TermSelector {
 	
 	private void max_min_norm(TObjectFloatHashMap<String> map) {
 		float values[] = map.getValues();
-		float max = Float.POSITIVE_INFINITY;
-		float min = Float.NEGATIVE_INFINITY;
+		float max = values[0];
+		float min = values[0];
 		for (int i=0; i < values.length; i++) {
 			if(values[i] < min){
 				min = values[i];
@@ -326,7 +326,7 @@ public class SRM3TermSelector extends TermSelector {
 		}
 		
 		float gap = max - min;
-		System.out.print(max + ":" + min + ":" + gap);
+//		System.out.print(max + ":" + min + ":" + gap);
 		Object[] keys = map.keys();
 		for (int i=0; i < keys.length; i++) {
 			String key = (String) keys[i];
@@ -408,7 +408,20 @@ public class SRM3TermSelector extends TermSelector {
 	}
 	
 	public static void main(String[] args){
-		float score = sim("good", "nice");
-		System.out.print(score);
+//		float score = sim("good", "nice");
+//		System.out.print(score);
+		
+		float values[] = {-1, -0.25f, 1.2f, 3.2f};
+		float max = values[0];
+		float min = values[0];
+		for (int i=0; i < values.length; i++) {
+			if(values[i] < min){
+				min = values[i];
+			}else if(values[i] > max){
+				max = values[i];
+			}
+		}
+		float gap = max - min;
+		System.out.print(max + ":" + min + ":" + gap);
 	}
 }
