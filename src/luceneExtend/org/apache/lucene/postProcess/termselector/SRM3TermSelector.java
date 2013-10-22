@@ -353,10 +353,10 @@ public class SRM3TermSelector extends TermSelector {
 			// / sum);
 			String w = exTerms[pos].getTerm();
 			
-//			exTerms[pos].setWeightExpansion(alpha
-//					* exTerms[pos].getWeightExpansion() / sum + (1 - alpha)
-//					* sem_map.get(w) / sum1);
-			exTerms[pos].setWeightExpansion(sem_map.get(w) / sum1);
+			exTerms[pos].setWeightExpansion(alpha
+					* exTerms[pos].getWeightExpansion() / sum + (1 - alpha)
+					* sem_map.get(w) / sum1);
+//			exTerms[pos].setWeightExpansion(sem_map.get(w) / sum1);
 			this.termMap.put(w, exTerms[pos]);
 		}
 
@@ -486,21 +486,28 @@ public class SRM3TermSelector extends TermSelector {
 		// float score = sim("good", "nice");
 		// System.out.print(score);
 
-		float values[] = { -1, -0.25f, 1.2f, 3.2f };
-		float max = values[0];
-		float min = values[0];
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] < min) {
-				min = values[i];
-			} else if (values[i] > max) {
-				max = values[i];
-			}
-		}
-		float gap = max - min;
-		System.out.print(max + ":" + min + ":" + gap);
-		float ft[] = new float[10];
-		for(int i=0; i < ft.length; i++){
-			System.out.println(ft[i]);
+//		float values[] = { -1, -0.25f, 1.2f, 3.2f };
+//		float max = values[0];
+//		float min = values[0];
+//		for (int i = 0; i < values.length; i++) {
+//			if (values[i] < min) {
+//				min = values[i];
+//			} else if (values[i] > max) {
+//				max = values[i];
+//			}
+//		}
+//		float gap = max - min;
+//		System.out.print(max + ":" + min + ":" + gap);
+//		float ft[] = new float[10];
+//		for(int i=0; i < ft.length; i++){
+//			System.out.println(ft[i]);
+//		}
+		TObjectFloatHashMap<String> sem_map = new TObjectFloatHashMap<String>();
+		sem_map.put("key", 1.0f);
+		
+		sem_map.put("key", 2.0f);
+		for(Object key: sem_map.keys()){
+			System.out.println(sem_map.get((String) key));
 		}
 	}
 }
