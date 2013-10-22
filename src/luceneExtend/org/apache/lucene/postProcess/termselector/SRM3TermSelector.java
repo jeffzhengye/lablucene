@@ -244,7 +244,7 @@ public class SRM3TermSelector extends TermSelector {
 				weight1 = 0;
 			} else {
 				// float sem_score = sim(qstr, w);
-				float sem_score = sem_map.get(w);
+//				float sem_score = sem_map.get(w);
 				for (int i = 0; i < ws.wordDoc.length; i++) {
 					// weight += PD[i] * ws.wordDoc[i] * (alpha * PQ[i] +
 					// (1-alpha)*sem_map.get(w)/t_semscore);
@@ -274,7 +274,7 @@ public class SRM3TermSelector extends TermSelector {
 		
 		///////////////////////////////////////////////////////////////////////////
 		int topNterm = 20;
-		float doc_term_weights[][] = new float[docids.length][topNterm];
+		float doc_term_weights[][] = new float[docids.length][topNterm]; //P（w|D）
 		float sem_sims[] = new float[docids.length];
 		ArrayList<String> topNtermList = new ArrayList<String>();
 		for(int i = 0; i < topNterm && i < exTerms.length; i++) {
@@ -286,12 +286,38 @@ public class SRM3TermSelector extends TermSelector {
 			}
 		}
 		
+		float sem_sum = 0;
 		for (int i = 0; i < docids.length; i++) {
 			for (int j = 0; j < topNterm; j++) {
-				sem_sims[i] = sem_map.get(topNtermList.get(j)) * doc_term_weights[i][j] * PD[i] * PQ[i];
+				// weighted similarity between all query terms and topNterm for each doc
+				sem_sims[i] += sem_map.get(topNtermList.get(j)) * doc_term_weights[i][j];
 			}
+			sem_sum += sem_sims[i];
 		}
-		
+		sum1 = 0;
+		for (Entry<String, Structure> entry : map.entrySet()) {
+			String w = entry.getKey();
+			Structure ws = entry.getValue();
+			float weight = 0, weight1 = 0;
+
+			if (ws.df < EXPANSION_MIN_DOCUMENTS) { // || ws.ctf < 5
+				weight = 0;
+				weight1 = 0;
+			} else {
+				for (int i = 0; i < ws.wordDoc.length; i++) {
+
+					weight1 += PD[i] * ws.wordDoc[i] * sem_sims[i]; 
+				}
+			}
+
+//			exTerms[pos] = new ExpansionTerm(w, 0);
+//			exTerms[pos].setWeightExpansion(weight);
+//			pos++;
+//			sum += weight;
+
+			sem_map.put(w, weight1);
+			sum1 += weight1;
+		}
 		
 		///////////////////////////////////////////////////////////////////////////
 		
@@ -327,10 +353,10 @@ public class SRM3TermSelector extends TermSelector {
 			// / sum);
 			String w = exTerms[pos].getTerm();
 			
-			exTerms[pos].setWeightExpansion(alpha
-					* exTerms[pos].getWeightExpansion() / sum + (1 - alpha)
-					* sem_map.get(w) / sum1);
-			
+//			exTerms[pos].setWeightExpansion(alpha
+//					* exTerms[pos].getWeightExpansion() / sum + (1 - alpha)
+//					* sem_map.get(w) / sum1);
+			exTerms[pos].setWeightExpansion(sem_map.get(w) / sum1);
 			this.termMap.put(w, exTerms[pos]);
 		}
 
@@ -446,7 +472,7 @@ public class SRM3TermSelector extends TermSelector {
 	 */
 	@Override
 	public String getInfo() {
-		return "combinedSRM3alpha=" + alpha;
+		return "SRM3alpha=" + alpha;
 		// return "original_by_alpha=1RM3alpha=" + alpha;
 	}
 
