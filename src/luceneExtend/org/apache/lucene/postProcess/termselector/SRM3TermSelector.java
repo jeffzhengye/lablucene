@@ -3,49 +3,39 @@
  */
 package org.apache.lucene.postProcess.termselector;
 
+import gnu.trove.TObjectFloatHashMap;
+
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.index.TermFreqVector;
-import org.apache.lucene.index.TermPositionVector;
-import org.apache.lucene.postProcess.QueryExpansionModel;
-import org.apache.lucene.postProcess.termselector.RM3TermSelector;
-import org.apache.lucene.postProcess.termselector.TermSelector;
-import org.apache.lucene.search.model.Idf;
-
-import org.dutir.lucene.util.ApplicationSetup;
-import org.dutir.lucene.util.Rounding;
-import org.dutir.lucene.util.ExpansionTerms.ExpansionTerm;
-import org.dutir.lucene.util.TermsCache.Item;
-import org.dutir.util.Arrays;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-
-import javax.swing.JDialog;
-
-import gnu.trove.TObjectFloatHashMap;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.log4j.Logger;
+import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.index.TermPositionVector;
+import org.apache.lucene.postProcess.QueryExpansionModel;
+import org.apache.lucene.search.model.Idf;
+import org.dutir.lucene.util.ApplicationSetup;
+import org.dutir.lucene.util.ExpansionTerms.ExpansionTerm;
+import org.dutir.lucene.util.Rounding;
+import org.dutir.lucene.util.TermsCache.Item;
+import org.dutir.util.Arrays;
+import org.dutir.util.Normalizer;
 
 import redis.clients.jedis.Jedis;
 
@@ -55,7 +45,7 @@ import redis.clients.jedis.Jedis;
  */
 public class SRM3TermSelector extends TermSelector {
 
-	private static Logger logger = Logger.getLogger(RM3TermSelector.class);
+	private static Logger logger = Logger.getLogger(SRM3TermSelector.class);
 	private float alpha = Float.parseFloat(ApplicationSetup.getProperty(
 			"srm3.alpha", "0.5"));
 	private static String urlsim = ApplicationSetup.getProperty("srm3.urlsim",
@@ -294,6 +284,9 @@ public class SRM3TermSelector extends TermSelector {
 			}
 			sem_sum += sem_sims[i];
 		}
+//		indriNorm(sem_sims);
+//		Normalizer.norm_MaxMin_0_1(sem_sims);
+//		Normalizer.norm2(sem_sims);
 		sum1 = 0;
 		for (Entry<String, Structure> entry : map.entrySet()) {
 			String w = entry.getKey();
@@ -319,6 +312,9 @@ public class SRM3TermSelector extends TermSelector {
 			sum1 += weight1;
 		}
 		
+		for (int i = 0; i < docids.length; i++) {
+			logger.info("doc_weight -- " + PQ[i] + ":" + sem_sims[i] + ":" + PQ[i]/sem_sims[i]); 
+		}
 		///////////////////////////////////////////////////////////////////////////
 		
 		if (logger.isDebugEnabled()) {
@@ -342,8 +338,9 @@ public class SRM3TermSelector extends TermSelector {
 					+ exTerms[exTerms.length - 1].getWeightExpansion());
 
 		StringBuilder buf = new StringBuilder();
+		
+		float d_sum = 0, d_sum1 =0;
 		for (pos = 0; pos < termNum; pos++) {
-
 			if (logger.isDebugEnabled()
 					&& this.originalQueryTermidSet.contains(exTerms[pos]
 							.getTerm())) {
@@ -352,14 +349,19 @@ public class SRM3TermSelector extends TermSelector {
 			// exTerms[pos].setWeightExpansion(exTerms[pos].getWeightExpansion()
 			// / sum);
 			String w = exTerms[pos].getTerm();
+			float w_rm3 = exTerms[pos].getWeightExpansion() / sum;
+			float w_srm3 = sem_map.get(w) / sum1;
 			
-			exTerms[pos].setWeightExpansion(alpha
-					* exTerms[pos].getWeightExpansion() / sum + (1 - alpha)
-					* sem_map.get(w) / sum1);
+			exTerms[pos].setWeightExpansion(alpha * w_rm3 + (1 - alpha)	* w_srm3);
+//			logger.info(w + ":" + w_rm3 + ":" + w_srm3 + ":" + w_rm3/w_srm3);
 //			exTerms[pos].setWeightExpansion(sem_map.get(w) / sum1);
 			this.termMap.put(w, exTerms[pos]);
+			
+			d_sum += w_rm3;
+			d_sum1 += w_srm3;
 		}
-
+		
+		logger.info("sum =" + d_sum + ":" + d_sum1);
 		if (logger.isDebugEnabled()) {
 			logger.debug("original Query Weight: " + buf.toString());
 		}
@@ -384,6 +386,18 @@ public class SRM3TermSelector extends TermSelector {
 		}
 		for (int i = 0; i < pQ.length; i++) {
 			pQ[i] /= sum;
+		}
+	}
+	
+	private void indriNorm(TObjectFloatHashMap<String> map) {
+
+		// float K = pQ[0]; // first is max
+		float values[] = map.getValues();
+		float sum = Arrays.sum(values);
+
+		for (Object key: map.keys()) {
+			float value = map.get((String) key);
+			map.put((String) key, value/sum);
 		}
 	}
 
