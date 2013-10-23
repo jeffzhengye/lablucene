@@ -263,7 +263,7 @@ public class SRM3TermSelector extends TermSelector {
 		java.util.Arrays.sort(exTerms);
 		
 		///////////////////////////////////////////////////////////////////////////
-		int topNterm = 20;
+		int topNterm = 30;
 		float doc_term_weights[][] = new float[docids.length][topNterm]; //P（w|D）
 		float sem_sims[] = new float[docids.length];
 		ArrayList<String> topNtermList = new ArrayList<String>();
@@ -361,7 +361,7 @@ public class SRM3TermSelector extends TermSelector {
 			d_sum1 += w_srm3;
 		}
 		
-		logger.info("sum =" + d_sum + ":" + d_sum1);
+//		logger.info("sum =" + d_sum + ":" + d_sum1);
 		if (logger.isDebugEnabled()) {
 			logger.debug("original Query Weight: " + buf.toString());
 		}
