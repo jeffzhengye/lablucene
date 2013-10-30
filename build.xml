@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<project name="LabLucene" default="compile" basedir=".">
+
+	<property name="pname"
+            value="LabLucene"/>
+	<property name="version"
+            value="1.0"/>
+	
+	<path id="classpath.test">
+		<path path="build"/>
+		<pathelement location="./lib/log4j-1.2.9.jar"/>
+		<pathelement location="./lib/activation.jar"/>
+		<pathelement location="./lib/DUTLIB.jar"/>
+		<pathelement location="./lib/nekohtml-0.9.4.jar"/>
+		<pathelement location="./lib/trove-2.0.2.jar"/>
+		<pathelement location="./lib/xerces-2_6_2.jar"/>
+		<pathelement location="./lib/bzip2.jar"/>
+                <pathelement location="./lib/lingpipe-3.8.0.jar"/>
+		<pathelement location="./lib/hadoop18.2-joined.jar"/>
+		<pathelement location="./lib/tar.jar"/>
+		<pathelement location="./lib/xerces-2_6_2-apis.jar"/>
+	         <pathelement location="./lib/weka.jar"/>
+		  <pathelement location="./lib/commons-math-2.1.jar"/>
+		<pathelement location="./lib/langdetect.jar"/>
+		<pathelement location="./lib/barrister-0.1.8.jar"/>
+		<pathelement location="./lib/httpclient-4.3.1.jar"/>
+		<pathelement location="./lib/"/>
+<pathelement location="./lib/httpclient-cache-4.3.1.jar"/>
+<pathelement location="./lib/httpcore-4.3.jar"/>
+<pathelement location="./lib/httpmime-4.3.1.jar"/>
+<pathelement location="./lib/jedis-2.1.0.jar"/>
+	</path>
+
+	
+	<target name="debug-compile"
+	          description="Compiles TerrierExtend's classes to build">
+		<mkdir dir="build/"/>
+		<javac optimize="on"
+	           debug="on"
+	           debuglevel="source,lines,vars"
+		   failonerror="false"
+	           destdir="build">
+			<src path="src"/>
+			<classpath refid="classpath.test"/>
+			<include name="luceneExtend/**"/>
+			<include name="java/**"/>
+			<include name="application/**"/>
+			<include name="revised/**"/>
+			<exclude name="noclass/"/>
+			<classpath refid="classpath.test"/>
+		</javac>
+		<property name="name" location="location"/>
+
+	</target>
+	
+	<target name="compile"
+	          description="Compiles TerrierExtend's classes to build">
+		<mkdir dir="build"/>
+		<javac optimize="on" nowarn="on" debug="off" destdir="build" failonerror="false">
+			<compilerarg value="-Xlint:all"/>
+			<src path="src"/>
+			<classpath refid="classpath.test"/>			
+			<include name="luceneExtend/**"/>
+			<include name="java/**"/>
+			<include name="application/**"/>
+			<include name="revised/**"/>
+			<exclude name="noclass/"/>
+			<exclude name="**/test.java"/>
+			<classpath refid="classpath.test"/>
+		</javac>
+		<property name="name" location="location"/>
+
+	</target>
+
+	<target name="jar"
+	          description="Compile, then create jar =${pname}${version}.jar">
+		<jar destfile="lib/${pname}${version}.jar">
+			<fileset dir="build/"
+	               includes="**/*.class,**/*.dtd"/>
+		</jar>
+	</target>
+	
+</project>
