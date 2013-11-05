@@ -29,22 +29,17 @@
 */
 package org.apache.lucene.postProcess;
 
+import gnu.trove.TFloatArrayList;
+import gnu.trove.TIntArrayList;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-
-import gnu.trove.TFloatArrayList;
-import gnu.trove.THashMap;
-import gnu.trove.TIntArrayList;
-import gnu.trove.TIntHashSet;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.postProcess.RF08FeedbackSelector.Feedback;
 import org.apache.lucene.search.ScoreDoc;
 import org.dutir.lucene.evaluation.TRECQrelsInMemory;
 import org.dutir.lucene.util.ApplicationSetup;
 import org.dutir.lucene.util.Files;
-import org.dutir.util.Pair;
 
 /**
  * A feedback selector for *Both* pseudo-relevance feedback and real relevance
