@@ -49,7 +49,8 @@ public class WeightModelManager {
 				float termFreq = item.ctf;
 				model.prepare(maxDoc,
 							averageFiledLength, numberOfTokens,
-							numberOfUniqueTerms, df, query.getOccurNum(), termFreq);
+							numberOfUniqueTerms, df, query.getOccurNum(), termFreq, query.getqueryLen());
+				model.setSearcher(searcher);
 
 				return model;
 			} catch (InstantiationException e) {
@@ -106,7 +107,8 @@ public class WeightModelManager {
 //			averageFiledLength = (numberOfTokens - maxDoc *(query.getSlop() - 1 ) )/(float)maxDoc;
 			model.prepare(maxDoc,
 						averageFiledLength, numberOfTokens,
-						numberOfUniqueTerms, df, query.getOccurNum(), termFreq);
+						numberOfUniqueTerms, df, query.getOccurNum(), termFreq, query.getqueryLen());
+			model.setSearcher(searcher);
 
 			return model;
 		} catch (InstantiationException e) {
@@ -147,7 +149,8 @@ public class WeightModelManager {
 			float termFreq = 0;
 			model.prepare(maxDoc, 
 						averageFiledLength, numberOfTokens,
-						numberOfUniqueTerms, df, 1, termFreq);
+						numberOfUniqueTerms, df, 1, termFreq, -1); // this may have problem to set querylength = -1;
+			model.setSearcher(searcher);
 
 			return model;
 		} catch (InstantiationException e) {

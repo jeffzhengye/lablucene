@@ -28,6 +28,8 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 	public float c = Float.parseFloat(ApplicationSetup.getProperty("wm.c", "1.0f"));
 	/** Number of unique terms in the collection */
 	public float numberOfUniqueTerms;	
+	public float querylength;
+	public Searcher searcher;
 
 	/**
 	 * A default constructor that initialises the idf i attribute
@@ -64,8 +66,11 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 			numberOfUniqueTerms = searcher.getNumUniqTokens(field);
 			documentFrequency = searcher.docFreq(term);
 			this.keyFrequency = query.getOccurNum();
+			querylength = query.getqueryLen();
 			this.termFrequency = searcher.termFreq(term);
+			
 			i = new Idf(numberOfDocuments);
+			this.searcher = searcher;
 //			System.out.println(term.text() + ": " + documentFrequency);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -73,8 +78,12 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 		} 
 	}
 	
+	public void setSearcher(Searcher searcher){
+		this.searcher = searcher;
+	}
+	
 	public void prepare(float numberOfDocuments, float averageDocumentLength, float numberOfTokens, 
-			float numberOfUniqueTerms, float documentFrequency, float keyFrequency, float termFrequency)
+			float numberOfUniqueTerms, float documentFrequency, float keyFrequency, float termFrequency, float querylength)
 	{
 			this.numberOfDocuments = numberOfDocuments;
 			this.averageDocumentLength = averageDocumentLength;
@@ -84,6 +93,7 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 			this.keyFrequency = keyFrequency;
 			this.termFrequency = termFrequency;
 			i = new Idf(numberOfDocuments);
+			this.querylength = querylength;
 	}
 	
 	/**
@@ -94,6 +104,10 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 	 * and docLength, and other preset parameters
 	 */
 	public abstract float score(float tf, float docLength);
+	
+	public float score(float tf, float docLength, int innerid){
+		return score(tf, docLength);
+	}
 	/**
 	 * This method provides the contract for implementing weighting models.
 	 * @param tf The term frequency in the document
@@ -109,6 +123,15 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 		float n_t,
 		float F_t,
 		float keyFrequency);
+	
+	public float score(
+			float tf,
+			float docLength,
+			float n_t,
+			float F_t,
+			float keyFrequency, int innerid){
+		return score(tf, docLength, n_t, F_t, keyFrequency);
+	}
 	
 	/**
 	 * this method must be overwrote by a subclass of language model 
@@ -214,6 +237,10 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 	}
 
 	public float unseenScore(float length){
+		return score(0, length);
+	}
+	
+	public float unseenScore(float length, int innerid){
 		return score(0, length);
 	}
 }

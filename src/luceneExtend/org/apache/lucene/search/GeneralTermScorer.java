@@ -133,9 +133,9 @@ final class GeneralTermScorer extends RScorer {
 		float rscore = weightValue; // weightValue equals to the boost
 		if (doc == currentDoc) {
 			rscore *= weightModel.score(freqs[pointer],
-					length);
+					length, currentDoc);
 		} else {
-			rscore *= weightModel.unseenScore(length);
+			rscore *= weightModel.unseenScore(length, currentDoc);
 		}
 //		if (rscore == Float.NEGATIVE_INFINITY
 //				|| rscore == Float.POSITIVE_INFINITY) {

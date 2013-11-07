@@ -50,6 +50,8 @@ public abstract class RQuery  extends Query{
 
   //added yezheng 
   private float occurNum = 1.0f;
+  private float queryLen = 1.0f; //query length
+  
   /** Sets the boost for this query clause to <code>b</code>.  Documents
    * matching this clause will (in addition to the normal weightings) have
    * their score multiplied by <code>b</code>.
@@ -70,12 +72,19 @@ public abstract class RQuery  extends Query{
 
   public void setOccurNum(float num){occurNum = num; }
   
+  public void setqueryLen(float num){queryLen = num; }
+  
+  
   public void addOccurNum(){
 	  this.occurNum++;
   }
   
   public float getOccurNum(){
 	  return occurNum;
+  }
+  
+  public float getqueryLen(){
+	  return queryLen;
   }
   
   /** Gets the boost for this clause.  Documents matching

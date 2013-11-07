@@ -31,6 +31,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.RBooleanClause;
 import org.apache.lucene.search.RBooleanQuery;
 import org.apache.lucene.search.RPhraseQuery;
+import org.apache.lucene.search.RQuery;
 import org.apache.lucene.search.RTermQuery;
 import org.dutir.lucene.util.ApplicationSetup;
 
@@ -177,8 +178,14 @@ public class RMultiFieldQueryParser {
 			org.apache.lucene.analysis.Token pretoken = null;
 			try {
 				ArrayList<org.apache.lucene.analysis.Token> tlist = new ArrayList<org.apache.lucene.analysis.Token>();
+				ArrayList<RQuery> querylist = new ArrayList<RQuery>(); //record all the query in order to setQuerylength for MATF currently. 
+				float qlength = 0f;
 				while((token = ts.next()) != null){
-					bQuery.add(new RTermQuery(new Term(fields[i], token.term())), RBooleanClause.Occur.SHOULD);
+					RTermQuery tquery = new RTermQuery(new Term(fields[i], token.term()));
+					bQuery.add(tquery, RBooleanClause.Occur.SHOULD);
+					querylist.add(tquery);
+					qlength += 1;
+					
 					if(pType.equalsIgnoreCase("FD")){
 						tlist.add(token);
 						continue;
@@ -197,6 +204,7 @@ public class RMultiFieldQueryParser {
 							fquery.setOccurNum(1);
 							fquery.setSlop(slop);
 							bQuery.add(fquery, RBooleanClause.Occur.SHOULD);
+							querylist.add(fquery);
 						}
 						pretoken = token; 
 					}
@@ -211,8 +219,13 @@ public class RMultiFieldQueryParser {
 							fquery.setOccurNum(1);
 							fquery.setSlop(slop);
 							bQuery.add(fquery, RBooleanClause.Occur.SHOULD);
+							querylist.add(fquery);
 						}
 					}
+				}
+				//set query length
+				for(int li=0; li < querylist.size(); li++){
+					querylist.get(li).setqueryLen(qlength);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -35,7 +35,6 @@ import org.dutir.lucene.util.ExpansionTerms.ExpansionTerm;
 import org.dutir.lucene.util.Rounding;
 import org.dutir.lucene.util.TermsCache.Item;
 import org.dutir.util.Arrays;
-import org.dutir.util.Normalizer;
 
 import redis.clients.jedis.Jedis;
 
