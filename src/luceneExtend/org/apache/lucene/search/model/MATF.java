@@ -38,6 +38,24 @@ public class MATF extends WeightingModel {
 		throw new RuntimeException("should not use this method");
 	}
 	
+	public final float score(float tf, float docLength, int innerid) {
+		float AEF = this.termFrequency/this.documentFrequency;
+		
+		
+		float IDF = Idf.log((numberOfDocuments + 1)/this.documentFrequency) * AEF/(1 + AEF);
+		float QLF = this.querylength;
+		float alpha = 2 / (1 + Idf.log(1 + QLF));
+		
+		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
+		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+		float BRITF = RITF/ (1 + RITF);
+		float BLRTF = LRTF / (1 + LRTF);
+		
+		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+	    
+	    return TFF * IDF;
+	}
+	
 	
 	public float unseenScore(float length){
 		return 0;
@@ -74,13 +92,14 @@ public class MATF extends WeightingModel {
 			float IDF = Idf.log((numberOfDocuments + 1)/n_t) * AEF/(1 + AEF);
 			
 			float QLF = this.querylength;
+			float alpha = 2 / (1 + Idf.log(1 + QLF));
 			
 			float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 			float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
 			float BRITF = RITF/ (1 + RITF);
 			float BLRTF = LRTF / (1 + LRTF);
 			
-			float TFF = QLF * BRITF + (1 - QLF) * BLRTF;
+			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
 		    
 		    return TFF * IDF;
 		}
@@ -89,6 +108,10 @@ public class MATF extends WeightingModel {
 	static String field = ApplicationSetup.getProperty(	
 			"Lucene.QueryExpansion.FieldName", "content");
 	static private String torediskey(int t) {
+		int pos = ApplicationSetup.LUCENE_ETC.lastIndexOf("/");
+		if(pos > -1){
+			return ApplicationSetup.LUCENE_ETC.substring(pos + 1) + "|" + t;
+		}
 		return ApplicationSetup.LUCENE_ETC + "|" + t;
 	}
 	
@@ -106,7 +129,6 @@ public class MATF extends WeightingModel {
 				throw new RuntimeException("run time error");
 			else {
 				String strterms[] = tfv.getTerms();
-//				int freqs[] = tfv.getTermFrequencies();
 				float atf = docLength/strterms.length;
 				jedis.set(key, Float.toString(atf));
 				return atf;

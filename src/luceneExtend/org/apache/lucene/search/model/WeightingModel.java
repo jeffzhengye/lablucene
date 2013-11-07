@@ -241,6 +241,6 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 	}
 	
 	public float unseenScore(float length, int innerid){
-		return score(0, length);
+		return score(0, length, innerid);
 	}
 }
