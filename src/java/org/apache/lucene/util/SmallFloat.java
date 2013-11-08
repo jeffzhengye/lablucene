@@ -121,4 +121,12 @@ public class SmallFloat {
     bits += (63-2) << 24;
     return Float.intBitsToFloat(bits);
   }
+  
+  public static void main(String args[]){
+	  float a = 3.12f;
+	  byte b = floatToByte315(a);
+	  float ac = byte315ToFloat(b);
+	  System.out.println(b);
+	  System.out.println(ac);
+  }
 }
