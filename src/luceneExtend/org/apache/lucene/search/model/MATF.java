@@ -3,6 +3,8 @@ package org.apache.lucene.search.model;
 import java.io.IOException;
 
 import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.util.SmallFloat;
+import org.dutir.lucene.util.ATFCache;
 import org.dutir.lucene.util.ApplicationSetup;
 
 import redis.clients.jedis.Jedis;
@@ -15,7 +17,7 @@ import redis.clients.jedis.Jedis;
  * b = 0.75d<br> The b parameter can be altered by using the setParameter method.
  */
 public class MATF extends WeightingModel {
-	
+	static byte cache[] = null;
 	/** A default constructor.*/
 	public MATF() {
 		super();
@@ -53,7 +55,7 @@ public class MATF extends WeightingModel {
 		
 		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
 	    
-	    return TFF * IDF;
+	    return keyFrequency * TFF * IDF;
 	}
 	
 	
@@ -101,7 +103,7 @@ public class MATF extends WeightingModel {
 			
 			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
 		    
-		    return TFF * IDF;
+		    return keyFrequency * TFF * IDF;
 		}
 	
 	static Jedis jedis = new Jedis("127.0.0.1", 6379, 100000); // zheng's
@@ -116,6 +118,11 @@ public class MATF extends WeightingModel {
 	}
 	
 	private float AvgTF(float docLength, int innerid) {
+		if(cache != null){
+			return SmallFloat.byte315ToFloat(cache[innerid]);
+		}else{
+			cache = ATFCache.init(searcher);
+		}
 		String key = torediskey(innerid);
 		String value = jedis.get(key);
 		if (value != null)

@@ -107,7 +107,7 @@ public class QueryExpansionAdap extends QueryExpansion {
 							.getWeightExpansion());
 					total += weight;
 				} else {
-					weight = (float) (qry.getOccurNum() + QEModel.ROCCHIO_BETA
+					weight = (qry.getOccurNum() + QEModel.ROCCHIO_BETA
 							* expandedTerm.getWeightExpansion());
 					total += weight;
 //					weight = (float) (qry.getOccurNum() + QEModel.ROCCHIO_BETA);
@@ -155,8 +155,11 @@ public class QueryExpansionAdap extends QueryExpansion {
 
 		RBooleanClause clauses[] = this.cluaseSet.values().toArray(new RBooleanClause[0]);
 		RBooleanQuery fquery = generateNewQuery(clauses);
+		
+		fquery.setqueryLen(ApplicationSetup.EXPANSION_TERMS); //change this for MATF. if you want to change this value, also change it in QueryExansion.java
+//		fquery.setqueryLen(this.originalQueryLength);
+		
 		if(logger.isDebugEnabled())  logger.debug(query.getTopicId() + " Expansion Info:\n" + getExpansionInfo(expandedTerms, true));
-		// logger.debug(fquery);
 		int num = Integer.parseInt(ApplicationSetup.getProperty(
 				"TRECQuerying.endFeedback", "1000"));
 		TopDocCollector cls = new TopDocCollector(num);

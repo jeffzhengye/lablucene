@@ -79,7 +79,7 @@ public abstract class TermSelector {
 	// expansion terms
 
 	protected HashSet<String> originalQueryTermidSet;
-	protected String field = ApplicationSetup.getProperty(	
+	protected String field = ApplicationSetup.getProperty(
 			"Lucene.QueryExpansion.FieldName", "content");
 	protected Searcher searcher = null;
 
@@ -88,6 +88,9 @@ public abstract class TermSelector {
 	protected THashMap<String, String> metaMap = new THashMap<String, String>();
 
 	protected TopDocCollector topDoc;
+
+	protected float ATF = 1f; //average term frequency in the feedback set (if it's with Rocchio framework, it's actually ATF for a single document)
+	protected int originalQueryLength = 0; 
 
 	public TermSelector() {
 		this.EXPANSION_MIN_DOCUMENTS = Integer.parseInt(ApplicationSetup
@@ -217,6 +220,7 @@ public abstract class TermSelector {
 						feedbackSetLength += freqs[j];
 					}
 				}
+				this.ATF  = feedbackSetLength / freqs.length;
 			}
 		}
 	}
@@ -287,6 +291,10 @@ public abstract class TermSelector {
 
 	protected void setFeedSetLength(float feedbackSetLength) {
 		this.feedbackSetLength = feedbackSetLength;
+	}
+	
+	protected void setOriginalQueryLength(int len) {
+		this.originalQueryLength = len;
 	}
 
 	public static TermSelector getTermSelector(String name, Searcher searcher) {

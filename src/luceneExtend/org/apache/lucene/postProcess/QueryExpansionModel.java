@@ -62,6 +62,7 @@ public abstract class QueryExpansionModel {
 	/** The number of documents in the collection. */
 	protected long numberOfDocuments;
 	/** The number of top-ranked documents in the pseudo relevance set. */	
+	protected int originalQueryLength = 0;
 	protected float EXPANSION_DOCUMENTS = 
 		Integer.parseInt(ApplicationSetup.getProperty("expansion.documents", "3"));
 	/** The number of the most weighted terms from the pseudo relevance set 
@@ -69,6 +70,8 @@ public abstract class QueryExpansionModel {
 	 * original query terms and the added terms from the pseudo relevance set.*/
 	protected float EXPANSION_TERMS = 
 		Integer.parseInt(ApplicationSetup.getProperty("expansion.terms", "10"));
+	
+	protected float AVF = - 1;
 	
 	/** Rocchio's beta for query expansion. Its default value is 0.4.*/
 	public float ROCCHIO_BETA;
@@ -96,6 +99,15 @@ public abstract class QueryExpansionModel {
 	public void setNumberOfDocuments(long numberOfDocuments) {
 		this.numberOfDocuments = numberOfDocuments;
 	}
+	
+	public void setOriginalQueryLength(int len) {
+		this.originalQueryLength = len;
+	}
+	
+	public int getOriginalQueryLength() {
+		return this.originalQueryLength ;
+	}
+	
 	/**
 	 *  A default constructor for the class that initialises the idf attribute.
 	 */
@@ -135,6 +147,15 @@ public abstract class QueryExpansionModel {
      */
     public void setDocumentFrequency(float documentFrequency){
         this.documentFrequency = documentFrequency;
+    }
+    
+    
+    public void setAVF(float avf){
+        this.AVF = avf;
+    }
+    
+    public void setOriginalQuerylength(int len){
+        this.originalQueryLength = len;
     }
     
     /**

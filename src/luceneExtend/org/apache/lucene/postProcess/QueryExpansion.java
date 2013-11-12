@@ -84,10 +84,11 @@ public class QueryExpansion implements PostProcess {
 	protected Searcher searcher = null;
 	protected ScoreDoc[] ScoreDoc = null;
 	protected IndexReader reader = null;
-	protected Query pQuery = null;
+	protected RQuery pQuery = null;
 	protected RBooleanClause bclause[] = null;
 	protected float totalNumTokens = 0;
 	protected int totalNumDocs = 0;
+	protected int originalQueryLength;
 	protected float averageDocumentLength =0;
 	protected HashMap<RBooleanClause, RBooleanClause> cluaseSet = null;
 
@@ -98,6 +99,7 @@ public class QueryExpansion implements PostProcess {
 	 */
 	protected HashSet<String> termSet = null;
 	protected String topicId = null;
+	
 	static Logger logger = Logger.getLogger(QueryExpansion.class);
 	static String field = ApplicationSetup.getProperty(	
 			"Lucene.QueryExpansion.FieldName", "content");
@@ -291,11 +293,15 @@ public class QueryExpansion implements PostProcess {
 		return bquery;
 	}
 
-	protected static RBooleanClause generateClause(ExpansionTerm expandedTerm) {
+	protected RBooleanClause generateClause(ExpansionTerm expandedTerm) {
 		RTermQuery query = new RTermQuery(new Term(field, expandedTerm
 				.getTerm()));
 		// query.setBoost(expandedTerm.getWeightExpansion());
 		query.setOccurNum(expandedTerm.getWeightExpansion());
+		
+		query.setqueryLen(ApplicationSetup.EXPANSION_TERMS); //change this for MATF. if you want to change this value, also change it in QueryExansionAdap.java
+//		query.setqueryLen(this.originalQueryLength);
+		
 		return new RBooleanClause(query, Occur.SHOULD);
 	}
 
@@ -314,6 +320,7 @@ public class QueryExpansion implements PostProcess {
 		this.searcher = seacher;
 		this.ScoreDoc = topDoc.topDocs().scoreDocs;
 		this.pQuery = query;
+		this.originalQueryLength = this.pQuery.getqueryLen();
 		this.topicId = query.getTopicId();
 		this.reader = seacher.getIndexReader();
 		this.bclause = query.getClauses();
@@ -331,6 +338,8 @@ public class QueryExpansion implements PostProcess {
 				QEModel.setAverageDocumentLength(searcher
 						.getAverageLength(field));
 				QEModel.setNumberOfDocuments(searcher.maxDoc());
+				QEModel.setOriginalQueryLength(this.originalQueryLength);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

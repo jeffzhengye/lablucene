@@ -118,6 +118,10 @@ public class DFRTermSelector extends TermSelector {
 				TermsCache.Item item = getItem(allTerms[i].getTerm());
 				float TF = item.ctf;
 				float DF = item.df;
+				QEModel.setAVF(ATF); // currently this is for MAFT query expansion.
+//				assert(originalQueryLength != 0);
+//				QEModel.setOriginalQueryLength(originalQueryLength);
+//				logger.warn("" + originalQueryLength + ":" + QEModel.getOriginalQueryLength());
 				float weight = QEModel.score(allTerms[i].getWithinDocumentFrequency(), TF, DF);
 				allTerms[i].setWeightExpansion(weight);		
 				total += weight;

@@ -171,6 +171,7 @@ public class RMultiFieldQueryParser {
 		float pweight = Float.parseFloat(ApplicationSetup.getProperty("proximity.weight", "1.0"));
 		int slop = Integer.parseInt(ApplicationSetup.getProperty("proximity.slop", "1"));
 		String pType = ApplicationSetup.getProperty("proximity.type", "SD");
+		int qlength = 0;
 		for (int i = 0; i < fields.length; i++) {
 			reader = new StringReader(query);
 			TokenStream ts = analyzer.tokenStream(fields[i], reader);
@@ -179,7 +180,7 @@ public class RMultiFieldQueryParser {
 			try {
 				ArrayList<org.apache.lucene.analysis.Token> tlist = new ArrayList<org.apache.lucene.analysis.Token>();
 				ArrayList<RQuery> querylist = new ArrayList<RQuery>(); //record all the query in order to setQuerylength for MATF currently. 
-				float qlength = 0f;
+				
 				while((token = ts.next()) != null){
 					RTermQuery tquery = new RTermQuery(new Term(fields[i], token.term()));
 					bQuery.add(tquery, RBooleanClause.Occur.SHOULD);
@@ -233,6 +234,7 @@ public class RMultiFieldQueryParser {
 			}
 			
 		}
+		bQuery.setqueryLen(qlength);
 		return bQuery;
 	}
 

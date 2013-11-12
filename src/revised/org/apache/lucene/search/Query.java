@@ -48,7 +48,7 @@ import org.apache.lucene.index.IndexReader;
 public abstract class Query implements java.io.Serializable, Cloneable {
   private float boost = 1.0f;                     // query boost factor
 
-  //added yezheng 
+  //added by yezheng 
   private float occurNum = 1.0f;
   /** Sets the boost for this query clause to <code>b</code>.  Documents
    * matching this clause will (in addition to the normal weightings) have

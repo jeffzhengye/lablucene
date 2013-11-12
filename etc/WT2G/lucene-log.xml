@@ -29,7 +29,7 @@
 <!-- log4j.rootLogger=debug, stdout, R -->
  <root>
   <priority value="info" />
-  <appender-ref ref="console" />
+  <appender-ref ref="rfile" />
  </root>
  
 </log4j:configuration>
