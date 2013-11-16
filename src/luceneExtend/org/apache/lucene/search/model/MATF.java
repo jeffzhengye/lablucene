@@ -27,7 +27,7 @@ public class MATF extends WeightingModel {
 	 * @return the name of the model
 	 */
 	public final String getInfo() {
-		return "MATF";
+		return "MATF_MULTIPLE";
 	}
 	/**
 	 * Uses BM25 to compute a weight for a term in a document.
