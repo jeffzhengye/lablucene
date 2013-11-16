@@ -53,7 +53,8 @@ public class MATF extends WeightingModel {
 		float BRITF = RITF/ (1 + RITF);
 		float BLRTF = LRTF / (1 + LRTF);
 		
-		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+//		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+		float TFF = BRITF * BLRTF;
 	    
 	    return keyFrequency * TFF * IDF;
 	}
@@ -101,7 +102,8 @@ public class MATF extends WeightingModel {
 			float BRITF = RITF/ (1 + RITF);
 			float BLRTF = LRTF / (1 + LRTF);
 			
-			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+//			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+			float TFF = BRITF * BLRTF;
 		    
 		    return keyFrequency * TFF * IDF;
 		}
