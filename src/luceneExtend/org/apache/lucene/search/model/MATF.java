@@ -27,7 +27,7 @@ public class MATF extends WeightingModel {
 	 * @return the name of the model
 	 */
 	public final String getInfo() {
-		return "MATF_BRITF";
+		return "MATF_BLRTF";
 	}
 	/**
 	 * Uses BM25 to compute a weight for a term in a document.
@@ -54,7 +54,7 @@ public class MATF extends WeightingModel {
 		float BLRTF = LRTF / (1 + LRTF);
 		
 //		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
-		float TFF = BRITF;
+		float TFF = BLRTF;
 	    
 	    return keyFrequency * TFF * IDF;
 	}
@@ -103,7 +103,7 @@ public class MATF extends WeightingModel {
 			float BLRTF = LRTF / (1 + LRTF);
 			
 //			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
-			float TFF = BRITF;
+			float TFF = BLRTF;
 		    
 		    return keyFrequency * TFF * IDF;
 		}
