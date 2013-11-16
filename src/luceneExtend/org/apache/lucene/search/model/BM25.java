@@ -30,8 +30,7 @@ public class BM25 extends WeightingModel {
 	 */
 	public final String getInfo() {
 //		return "BM25b="+b +"k_1=" + k_1 +"k_3=" + k_3;
-//		return "BM25b=" + b;
-		return "BM25b=MATF";
+		return "BM25b=" + b;
 	}
 	/**
 	 * Uses BM25 to compute a weight for a term in a document.
@@ -44,9 +43,9 @@ public class BM25 extends WeightingModel {
 		float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		K = ((k_1 + 1f) * tf / K);
 		
-		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
-		float BLRTF = LRTF / (1 + LRTF);
-		K = BLRTF;
+//		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+//		float BLRTF = LRTF / (1 + LRTF);
+//		K = BLRTF;
 		
 		float idf = ((k_3 + 1) * keyFrequency / (k_3 + keyFrequency))
 				* Idf.log((numberOfDocuments - documentFrequency + 0.5f)
@@ -76,9 +75,9 @@ public class BM25 extends WeightingModel {
 		
 		float K = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
 	    
-	    float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
-		float BLRTF = LRTF / (1 + LRTF);
-		K = BLRTF;
+//	    float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+//		float BLRTF = LRTF / (1 + LRTF);
+//		K = BLRTF;
 	    
 	    return Idf.log((numberOfDocuments - n_t + 0.5f) / (n_t+ 0.5f)) *
 //			((k_1 + 1d) * tf / (K + tf)) *
