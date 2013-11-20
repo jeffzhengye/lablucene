@@ -12,14 +12,13 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.postProcess.termselector.TermSelector;
-import org.apache.lucene.postProcess.termselector.RM3TermSelector.Structure;
 import org.apache.lucene.search.RBooleanQuery;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocCollector;
 import org.apache.lucene.search.TopDocs;
-import org.dutir.lucene.evaluation.AdhocEvaluation;
+import org.apache.lucene.search.model.Idf;
+import org.dutir.lucene.evaluation.TRECQrelsInMemory;
 import org.dutir.lucene.util.ApplicationSetup;
-import org.dutir.lucene.util.TermsCache.Item;
 import org.dutir.util.Arrays;
 import org.dutir.util.stream.StreamGenerator;
 
@@ -37,11 +36,12 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 
 	protected static Logger logger = Logger.getLogger("FeatureExtract13PP");
 
-	private static AdhocEvaluation trecR = null;
+	private static TRECQrelsInMemory trecR = null;
 
-	public static AdhocEvaluation getTRECQerls() {
+	public static TRECQrelsInMemory getTRECQerls() {
 		if (trecR == null) {
-			trecR = new AdhocEvaluation();
+			logger.info("Getting  TRECQrelsInMemory");
+			trecR = new TRECQrelsInMemory();
 		}
 		return trecR;
 	}
@@ -61,44 +61,6 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 
 	// boolean trainingTag = Boolean.parseBoolean(ApplicationSetup.getProperty(
 	// "PerQueryRegModelTraining.train", "true"));
-
-	protected void makeInstance(int tid) {
-		float avelen = this.averageDocumentLength;
-
-		for (int i = 0; i < this.set_size; i++) {
-			TIntDoubleHashMap instance = new TIntDoubleHashMap();
-			float relscore = this.scores[i]; // relevance score, id=1
-			float doc_len = Math.abs(avelen - this.doc_lens[i]); // id =2
-			// id=3, the percentage of query terms that appear in doc[i]
-			// id=4, a weighted percentage
-			// id=5, Mitra score
-
-			// id =6, KL-div between query and doc[i]
-			// id =7, clarity of doc[i]
-
-			instance.put(0, tid);
-			instance.adjustOrPutValue(1, 0, relscore);
-			instance.adjustOrPutValue(2, 0, doc_len);
-			instance.adjustOrPutValue(3, 0, this.occurPerc[i]);
-			instance.adjustOrPutValue(4, 0, this.weighted_occurPerc[i]);
-			instance.adjustOrPutValue(5, 0, this.mitra_socres[i]);
-			instance.adjustOrPutValue(6, 0, this.query_doc_kl[i]);
-			instance.adjustOrPutValue(7, 0, this.doc_clarity[i]);
-			instance.adjustOrPutValue(8, 0, this.doc_topK_clarity[i]);
-			instance.adjustOrPutValue(9, 0, this.docids[i]); // this feature
-																// only stores
-																// the docno for
-																// evaluation
-																// purpose
-
-			// last one is quality level
-			int inner_id = this.ScoreDoc[i].doc;
-			int level = this.trecR.qrels.getRelevantGrad("" + tid, ""
-					+ inner_id);
-			instance.adjustOrPutValue(10, 0, level);
-			addInstance(instance);
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -131,10 +93,12 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 		// // output(topDoc);
 		String content = outputStr(topDoc);
 
-		trecR.evaluateStr(content);
-		double map = trecR.AveragePrecision;
 		for (int i = 0; i < fdocs.docid.length; i++) {
 				int docid = fdocs.docid[i];
+				int int_relevancy = trecR.isRelevant(topicId, ""+docid) ?1:0;
+				TIntDoubleHashMap instance = new TIntDoubleHashMap();
+				instance.put(0, int_relevancy); // 0: relevance
+				
 				TermFreqVector tfv = null;
 				try {
 					tfv = this.searcher.getIndexReader().getTermFreqVector(docid,
@@ -147,22 +111,31 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 				else {
 					String strterms[] = tfv.getTerms();
 					int freqs[] = tfv.getTermFrequencies();
-					float dl = Arrays.sum(freqs);
-					docLens[i] = dl;
-					feedbackSetLength += dl;
+					float docLength = Arrays.sum(freqs);
+					float AVF = docLength/strterms.length;
+					float alpha = 2 / (1 + Idf.log(1 + this.originalQueryLength));
+					instance.adjustOrPutValue(1, 0, docLength); //1: doc length
+					instance.adjustOrPutValue(2, 0, this.originalQueryLength); //2 : query length
+					instance.adjustOrPutValue(3, 0, AVF); //3 : average term frequency
 
 					for (int j = 0; j < strterms.length; j++) {
-						Structure stru = map.get(strterms[j]);
-						if (stru == null) {
-							stru = new Structure(docids.length);
-							Item item = getItem(strterms[j]);
-							stru.ctf = item.ctf; 
-							java.util.Arrays.fill(stru.wordDoc, 0);
-							map.put(strterms[j], stru);
+//							Item item = getItem(strterms[j]);
+						if(this.termSet.contains(strterms[j])){
+							float RITF = Idf.log(1 + freqs[j])/Idf.log(1 + AVF);
+							float LRTF = freqs[j] * Idf.log(1 + averageDocumentLength/docLength);
+							float BRITF = RITF/ (1 + RITF);
+							float BLRTF = LRTF / (1 + LRTF);
+							float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+							instance.adjustOrPutValue(4, 0, BRITF); //3 : BRITF
+							instance.adjustOrPutValue(5, 0, BLRTF); //3 : BRITF
+							instance.adjustOrPutValue(6, 0, BLRTF); //3 : BRITF
 						}
-						stru.wordDoc[i] = score(freqs[j], dl, stru.ctf, numOfTokens);
-						stru.df++;
 					}
+					
+					instance.put(4, instance.get(4)/this.originalQueryLength);
+					instance.put(5, instance.get(5)/this.originalQueryLength);
+					instance.put(6, instance.get(6)/this.originalQueryLength);
+					addInstance(instance);
 				}
 		}
 		// /////////////////////////////////////////////////////////////////////
