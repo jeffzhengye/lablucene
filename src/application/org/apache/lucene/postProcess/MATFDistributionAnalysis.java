@@ -46,18 +46,14 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 		return trecR;
 	}
 
-	static String outfile = "SVMreg.res";
-	static String modelout = "reg.model";
 	static ArrayList<TIntDoubleHashMap> insts = new ArrayList<TIntDoubleHashMap>();
 	static ArrayList<Float> grades = new ArrayList<Float>();
 	static ArrayList<Float> grades1 = new ArrayList<Float>();
 
 	static ArrayList<String> trainPara = new ArrayList<String>();
 
-	static String classfierName = ApplicationSetup.getProperty(
-			"PerQueryRegModelTraining.reg", "SVMreg");
 	String lasttopic = ApplicationSetup.getProperty(
-			"PerQueryRegModelTraining.lasttopic", ApplicationSetup.getProperty("trec.query.endid", ""));
+			"dataset.lasttopic", ApplicationSetup.getProperty("trec.query.endid", ""));
 
 	// boolean trainingTag = Boolean.parseBoolean(ApplicationSetup.getProperty(
 	// "PerQueryRegModelTraining.train", "true"));
@@ -90,8 +86,6 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 		selector.setOriginalQueryTerms(termSet);
 		selector.setField(field);
 
-		// // output(topDoc);
-		String content = outputStr(topDoc);
 
 		for (int i = 0; i < fdocs.docid.length; i++) {
 				int docid = fdocs.docid[i];
@@ -126,9 +120,9 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 							float BRITF = RITF/ (1 + RITF);
 							float BLRTF = LRTF / (1 + LRTF);
 							float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
-							instance.adjustOrPutValue(4, 0, BRITF); //3 : BRITF
-							instance.adjustOrPutValue(5, 0, BLRTF); //3 : BRITF
-							instance.adjustOrPutValue(6, 0, BLRTF); //3 : BRITF
+							instance.adjustOrPutValue(4, 0, BRITF); //4 : BRITF
+							instance.adjustOrPutValue(5, 0, BLRTF); //5 : BRITF
+							instance.adjustOrPutValue(6, 0, TFF); //6 : TFF
 						}
 					}
 					
@@ -160,20 +154,12 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 				prefix = prefix.substring(pos+1);
 
 				BufferedWriter bout = StreamGenerator.getBufferFileWriter(
-						prefix + ".train.quality.1." + lasttopic, 2);
+						prefix + ".matf." + lasttopic, 2);
 				for (int i = 0; i < insts.size(); i++) {
 					bout.write(toString(insts.get(i)) + "\n");
 				}
 				bout.close();
-				// ////////////////////////////////////////////////////////
-				 bout = StreamGenerator.getBufferFileWriter(prefix +
-				 ".train.quality.2." + lasttopic, 2);
-				 for (int i = 0; i < insts.size(); i++) {
-				 bout.write(grades.get(i) + " " + toString(insts.get(i)) +
-				 "\n");
-				 }
-				 bout.close();
-			} catch (IOException e) {
+				} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -181,13 +167,12 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 
 	private String toString(TIntDoubleHashMap inst) {
 		StringBuilder buf = new StringBuilder();
-		buf.append((int) inst.get(inst.size() - 1) + " ");
-		buf.append("qid:" + (int) inst.get(0) + " ");
-		for (int i = 1; i < inst.size() - 2; i++) {
-			buf.append("" + i + ":" + inst.get(i) + " ");
+//		buf.append((int) inst.get(inst.size() - 1) + " ");
+//		buf.append("qid:" + (int) inst.get(0) + " ");
+		for (int i = 0; i < inst.size(); i++) {
+			buf.append("" + inst.get(i) + " ");
 		}
-		buf.append(" #docno=" + (int) inst.get(inst.size() - 2));
-		return buf.toString();
+		return buf.toString().trim();
 	}
 
 	protected static String toPythonPredictStr(TIntDoubleHashMap inst) {
@@ -202,59 +187,6 @@ public class MATFDistributionAnalysis extends QueryExpansion {
 		insts.add(inst);
 	}
 
-	private void output(TopDocCollector topDoc) {
-		TopDocs topDocs = topDoc.topDocs();
-		int len = topDocs.totalHits;
-		PrintWriter pw = null;
-		try {
-			pw = new PrintWriter(new File(outfile));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
-
-		int maximum = Math.min(topDocs.scoreDocs.length, 1000);
-
-		// if (minimum > set.getResultSize())
-		// minimum = set.getResultSize();
-		final String iteration = "Q" + "0";
-		final String queryIdExpanded = this.topicId + " " + iteration + " ";
-		final String methodExpanded = " " + "LabLucene" + ApplicationSetup.EOL;
-		StringBuilder sbuffer = new StringBuilder();
-		// the results are ordered in descending order
-		// with respect to the score.
-		for (int i = 0; i < maximum; i++) {
-			int docid = topDocs.scoreDocs[i].doc;
-			String filename = "" + docid;
-			float score = topDocs.scoreDocs[i].score;
-
-			if (filename != null && !filename.equals(filename.trim())) {
-				if (logger.isDebugEnabled())
-					logger.debug("orginal doc name not trimmed: |" + filename
-							+ "|");
-			} else if (filename == null) {
-				logger.error("inner docid does not exist: " + docid
-						+ ", score:" + score);
-				if (docid > 0) {
-					try {
-						logger.error("previous docno: "
-								+ this.searcher.doc(docid - 1).toString());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				continue;
-			}
-			sbuffer.append(queryIdExpanded);
-			sbuffer.append(filename);
-			sbuffer.append(" ");
-			sbuffer.append(i);
-			sbuffer.append(" ");
-			sbuffer.append(score);
-			sbuffer.append(methodExpanded);
-		}
-		pw.write(sbuffer.toString());
-		pw.close();
-	}
 
 	public String getInfo() {
 		return ("PerQueryOptimal");
