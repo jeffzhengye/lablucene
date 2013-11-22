@@ -51,7 +51,7 @@ public class BM25 extends WeightingModel {
 				* Idf.log((numberOfDocuments - documentFrequency + 0.5f)
 						/ (documentFrequency + 0.5f));
 		return K * idf;
-	}
+	}                                                    
 	
 	public float unseenScore(float length){
 		return 0;
@@ -70,12 +70,12 @@ public class BM25 extends WeightingModel {
 		float docLength,
 		float n_t,
 		float F_t,
-		float keyFrequency) {
+		float keyFrequency) {	
 //	    float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		
 		float K = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
 	    
-//	    float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+//	    float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 //		float BLRTF = LRTF / (1 + LRTF);
 //		K = BLRTF;
 	    
