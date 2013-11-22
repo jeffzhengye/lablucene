@@ -73,7 +73,7 @@ public class ABM25 extends WeightingModel {
 		float F_t,
 		float keyFrequency) {
 		float alpha = 2 / (1 + Idf.log(1 + this.querylength));
-		b = 0.3f * alpha + 0.7f * (1-alpha);
+		b = 0.7f * alpha + 0.3f * (1-alpha);
 		
 //	    float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		
