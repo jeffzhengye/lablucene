@@ -39,7 +39,7 @@ public class ABM25 extends WeightingModel {
 	 *         tf and docLength, and other preset parameters
 	 */
 	public final float score(float tf, float docLength) {
-		float alpha = 1.25f / (1 + Idf.log(1 + this.querylength));
+		float alpha = 1.0f / (1 + Idf.log(1 + this.querylength));
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
 //		b = alpha * 0.5f;
 		b = alpha;
@@ -75,7 +75,7 @@ public class ABM25 extends WeightingModel {
 		float n_t,
 		float F_t,
 		float keyFrequency) {
-		float alpha = 1.25f / (1 + Idf.log(1 + this.querylength));
+		float alpha = 1.0f / (1 + Idf.log(1 + this.querylength));
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
 //		b = alpha * 0.5f;
 		b = alpha;
