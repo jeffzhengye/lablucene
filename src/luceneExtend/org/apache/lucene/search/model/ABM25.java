@@ -39,12 +39,12 @@ public class ABM25 extends WeightingModel {
 	 *         tf and docLength, and other preset parameters
 	 */
 	public final float score(float tf, float docLength) {
-		float alpha = 0.8f / (1 + Idf.log(1 + this.querylength));
+		float alpha = 2f / (1 + Idf.log(1 + this.querylength));
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
 //		b = alpha * 0.5f;
-		b = alpha;
+		float ab = b* 1.5f* alpha;
 		
-		float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
+		float K = k_1 * ((1 - ab) + ab * docLength / averageDocumentLength) + tf;
 		K = ((k_1 + 1f) * tf / K);
 		
 //		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
@@ -75,14 +75,14 @@ public class ABM25 extends WeightingModel {
 		float n_t,
 		float F_t,
 		float keyFrequency) {
-		float alpha = 0.8f / (1 + Idf.log(1 + this.querylength));
+		float alpha = 2f / (1 + Idf.log(1 + this.querylength));
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
 //		b = alpha * 0.5f;
-		b = alpha;
+		float ab = b* 1.5f* alpha;
 		
 //	    float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		
-		float K = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
+		float K = (k_1 + 1f) * tf / (k_1 * ((1 - ab) + ab * docLength / averageDocumentLength) + tf);
 	    
 //	    float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 //		float BLRTF = LRTF / (1 + LRTF);
