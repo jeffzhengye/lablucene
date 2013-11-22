@@ -39,9 +39,11 @@ public class ABM25 extends WeightingModel {
 	 *         tf and docLength, and other preset parameters
 	 */
 	public final float score(float tf, float docLength) {
-		float alpha = 2 / (1 + Idf.log(1 + this.querylength));
+		float alpha = 1.25f / (1 + Idf.log(1 + this.querylength));
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
-		b = alpha * 0.5f;
+//		b = alpha * 0.5f;
+		b = alpha;
+		
 		float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		K = ((k_1 + 1f) * tf / K);
 		
@@ -53,7 +55,7 @@ public class ABM25 extends WeightingModel {
 				* Idf.log((numberOfDocuments - documentFrequency + 0.5f)
 						/ (documentFrequency + 0.5f));
 		return K * idf;
-	}                                                    
+	}                                                 
 	
 	public float unseenScore(float length){
 		return 0;
@@ -73,9 +75,10 @@ public class ABM25 extends WeightingModel {
 		float n_t,
 		float F_t,
 		float keyFrequency) {
-		float alpha = 2 / (1 + Idf.log(1 + this.querylength));
+		float alpha = 1.25f / (1 + Idf.log(1 + this.querylength));
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
-		b = alpha * 0.5f;
+//		b = alpha * 0.5f;
+		b = alpha;
 		
 //	    float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		
