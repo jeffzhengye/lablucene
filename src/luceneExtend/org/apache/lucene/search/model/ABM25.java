@@ -34,16 +34,16 @@ public class ABM25 extends WeightingModel {
 	
 	private float getAB(){
 		if(this.querylength ==1){
-			return b * 0.9f;
+			return b * 0.85f;
 		}else if(this.querylength ==2){
 			return b;
 		}
 		else if(this.querylength ==3){
-			return b;
+			return b*1.05f;
 		}else if(this.querylength ==4){
 			return b * 1.1f;
 		}else{
-			return b;
+			return b *1.15f;
 		}
 	}
 	/**
