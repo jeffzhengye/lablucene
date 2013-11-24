@@ -30,7 +30,7 @@ public class LBM25 extends WeightingModel {
 	 * @return the name of the model
 	 */
 	public final String getInfo() {
-		return "LBM25sigma=" + sigma;
+		return "LBM25b=" + b + "sigma=" + sigma;
 	}
 	/**
 	 * Uses BM25 to compute a weight for a term in a document.
