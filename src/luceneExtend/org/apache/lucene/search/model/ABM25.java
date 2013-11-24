@@ -31,6 +31,21 @@ public class ABM25 extends WeightingModel {
 	public final String getInfo() {
 		return "ABM25";
 	}
+	
+	private float getAB(){
+		if(this.querylength ==1){
+			return b * 0.9f;
+		}else if(this.querylength ==2){
+			return b;
+		}
+		else if(this.querylength ==3){
+			return b;
+		}else if(this.querylength ==4){
+			return b * 1.1f;
+		}else{
+			return b;
+		}
+	}
 	/**
 	 * Uses BM25 to compute a weight for a term in a document.
 	 * @param tf The term frequency in the document
@@ -43,6 +58,7 @@ public class ABM25 extends WeightingModel {
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
 //		b = alpha * 0.5f;
 		float ab = b* 1.5f* alpha;
+		ab = getAB();
 		
 		float K = k_1 * ((1 - ab) + ab * docLength / averageDocumentLength) + tf;
 		K = ((k_1 + 1f) * tf / K);
@@ -79,6 +95,7 @@ public class ABM25 extends WeightingModel {
 //		b = 0.7f * alpha + 0.3f * (1-alpha);
 //		b = alpha * 0.5f;
 		float ab = b* 1.5f* alpha;
+		ab = getAB();
 		
 //	    float K = k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf;
 		
