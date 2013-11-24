@@ -36,10 +36,10 @@ public class ABM25 extends WeightingModel {
 		if(this.querylength ==1){
 			return b * 0.85f;
 		}else if(this.querylength ==2){
-			return b;
+			return b *0.95f;
 		}
 		else if(this.querylength ==3){
-			return b*1.05f;
+			return b;
 		}else if(this.querylength ==4){
 			return b * 1.1f;
 		}else{
