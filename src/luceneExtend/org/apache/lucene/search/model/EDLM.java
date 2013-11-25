@@ -47,6 +47,7 @@ public class EDLM extends WeightingModel {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]);
+		pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
 		return keyFrequency * log(alpha * pRITF + (1-alpha)* pterm);
 	}
@@ -61,7 +62,9 @@ public class EDLM extends WeightingModel {
 			float keyFrequency, int innerid) {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
+		
 		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]);
+		pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * F_t / n_t)/ (docLength + mu);
 		return keyFrequency * log(alpha * pRITF + (1-alpha)* pterm);
 	}
