@@ -162,6 +162,7 @@ public class ATFCache {
 		IndexReader reader = searcher.getIndexReader();
 		int numofdoc = reader.maxDoc();
 		cache = new byte[numofdoc];
+		norm = new byte[numofdoc];
 		for(int i =0; i < numofdoc; i++){
 			TermFreqVector tfv;
 			try {
