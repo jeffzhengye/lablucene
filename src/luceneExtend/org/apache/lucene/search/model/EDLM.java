@@ -16,7 +16,7 @@ public class EDLM extends WeightingModel {
 	 * A default constructor. Uses the default value of mu=1000.
 	 */
 	static float mu = Integer.parseInt(ApplicationSetup.getProperty("dlm.mu", "1000"));
-	static float alpha = Integer.parseInt(ApplicationSetup.getProperty("edlm.alpha", "0.3"));
+	static float alpha = Float.parseFloat(ApplicationSetup.getProperty("edlm.alpha", "0.3"));
 	public EDLM() {
 		super();
 	}
