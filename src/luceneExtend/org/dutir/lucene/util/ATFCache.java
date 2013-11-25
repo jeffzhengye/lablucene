@@ -52,7 +52,7 @@ public class ATFCache {
 			return;
 		}
 		initATF_norm(searcher);//read from file, failure leads to cache ==null. Then proceed to build
-		if (cache == null) {
+		if (cache == null || norm == null) {
 			build(searcher);
 		}
 	}
