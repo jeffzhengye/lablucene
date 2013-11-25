@@ -9,7 +9,9 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.model.Idf;
 import org.apache.lucene.util.SmallFloat;
+import org.dutir.util.Arrays;
 
 /**
  * @author zheng
@@ -24,24 +26,35 @@ public class ATFCache {
 	 * you should set a different path for every different collection.
 	 */
 	static String path = null;
-//	static String lockpath = null;
+	static String normpath = null;
 	static {
 		String indexPath = ApplicationSetup.getProperty(
 				"Lucene.indexDirectory", ".");
 		path = indexPath + "/averTF.cache";
-//		lockpath = indexPath + "/termscache.lock";
+		normpath = indexPath + "/sumRITF.cache";
 	}
 	public static byte[] cache = null;
+	public static byte[] norm = null;
 	
 	public static byte[] init(Searcher searcher){
 		if(cache != null){
 			return cache;
 		}
-		initCache(searcher);
+		initCache(searcher);//read from file, failure leads to cache ==null. Then proceed to build
 		if (cache == null) {
 			build(searcher);
 		}
 		return cache;
+	}
+	
+	public static void initAll(Searcher searcher){
+		if(cache != null && norm !=null){
+			return;
+		}
+		initATF_norm(searcher);//read from file, failure leads to cache ==null. Then proceed to build
+		if (cache == null) {
+			build(searcher);
+		}
 	}
 	
 	public static byte[] init(int maxdoc){
@@ -65,6 +78,37 @@ public class ATFCache {
 		return cache;
 	}
 	
+	public static void initATF_norm(int maxdoc){
+		if(cache != null && norm != null){
+			return;
+		}
+		try {
+			File file = new File(path);
+			if (file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				cache = new byte[maxdoc];
+				int len = fis.read(cache);
+				if(len != maxdoc){
+					logger.warn("inconsistant");
+				}
+				fis.close();
+			}
+			
+			file = new File(path);
+			if (file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				norm = new byte[maxdoc];
+				int len = fis.read(norm);
+				if(len != maxdoc){
+					logger.warn("inconsistant");
+				}
+				fis.close();
+			}
+		} catch (Exception e) {
+			logger.warn("cannot init");
+		}
+	}
+	
 
 	private static void initCache(Searcher searcher) {
 		try {
@@ -84,6 +128,36 @@ public class ATFCache {
 		}
 	}
 	
+	private static void initATF_norm(Searcher searcher) {
+		try {
+			File file = new File(path);
+			if (file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				int maxdoc = searcher.getIndexReader().maxDoc();
+				cache = new byte[maxdoc];
+				int len = fis.read(cache);
+				if(len != maxdoc){
+					logger.warn("inconsistant");
+				}
+				fis.close();
+			}
+			
+			file = new File(normpath);
+			if (file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				int maxdoc = searcher.getIndexReader().maxDoc();
+				norm = new byte[maxdoc];
+				int len = fis.read(norm);
+				if(len != maxdoc){
+					logger.warn("norm inconsistant");
+				}
+				fis.close();
+			}
+		} catch (Exception e) {
+			logger.warn("cannot init");
+		}
+	}
+	
 	public static void build(Searcher searcher){
 		IndexReader reader = searcher.getIndexReader();
 		int numofdoc = reader.maxDoc();
@@ -93,18 +167,24 @@ public class ATFCache {
 			try {
 				tfv = reader.getTermFreqVector(
 						i, field);
-				float docLength = searcher.getFieldLength(field, i);
 				if (tfv == null){
 //					throw new RuntimeException("run time error: " + i + ":" + numofdoc);
-					logger.warn("run time error: " + i + ":" + numofdoc + ":" + docLength);
+					logger.warn("run time error: " + i + ":" + numofdoc) ;
 					cache[i] = SmallFloat.floatToByte315(0);
 				}else {
 					String strterms[] = tfv.getTerms();
-					float atf = docLength/strterms.length;
+					int freqs[] = tfv.getTermFrequencies();
+					int docLength = Arrays.sum(freqs);
+					float atf = docLength/(float) strterms.length;
+					float sumRITF = 0f;
+					float denominator = Idf.log(1 + atf);
+					for(int j=0; j < freqs.length; j++){
+						sumRITF += Idf.log(1 + freqs[j])/denominator;
+					}
 					cache[i] = SmallFloat.floatToByte315(atf);
+					norm[i] = SmallFloat.floatToByte315(sumRITF);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -119,6 +199,15 @@ public class ATFCache {
 			e.printStackTrace();
 		}
 		
+		file = new File(normpath);
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(norm);
+			fos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }
