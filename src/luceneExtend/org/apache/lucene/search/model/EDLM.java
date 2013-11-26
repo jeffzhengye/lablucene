@@ -48,22 +48,23 @@ public class EDLM extends WeightingModel {
 	
 	public final float score(float tf, float docLength, int innerid) {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
-		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
-		float pRITF = Idf.log((numberOfDocuments  + 1f)/(documentFrequency) ) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
-//		pRITF = RITF/(1+RITF);
+		float RITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
+//		float pRITF = Idf.log((numberOfDocuments  + 1f)/(documentFrequency) ) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
+		float pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
-		float partA = 0f;
-		if(tf > 0f){
-			partA = pRITF +termFrequency / numberOfTokens;
-		}else{
-			partA = termFrequency / numberOfTokens;
-		}
-//		if(partA != 0f){
-//			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
+//		float partA = 0f;
+//		if(tf > 0f){
+//			partA = pRITF +termFrequency / numberOfTokens;
+//		}else{
+//			partA = termFrequency / numberOfTokens;
 //		}
-//		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
-		return retvalue;
+////		if(partA != 0f){
+////			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
+////		}
+////		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
+//		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
+//		return retvalue;
+		return pRITF * keyFrequency * log( pterm );
 	}
 
 	@Override
@@ -75,23 +76,25 @@ public class EDLM extends WeightingModel {
 	public float score(float tf, float docLength, float n_t, float F_t,
 			float keyFrequency, int innerid) {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
-		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
-		float pRITF = Idf.log((numberOfDocuments + 1f)/(n_t)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
-//		pRITF = RITF/(1+RITF);
+		float RITF = Idf.log((numberOfDocuments + 1f)/(n_t)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
+//		float pRITF = Idf.log((numberOfDocuments + 1f)/(n_t)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
+		float pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * F_t / n_t)/ (docLength + mu);
 		
-		float partA = 0f;
-		if(tf > 0f){
-			partA = pRITF +termFrequency / numberOfTokens;
-		}else{
-			partA = termFrequency / numberOfTokens;
-		}
-//		if(partA != 0f){
-//			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
+//		float partA = 0f;
+//		if(tf > 0f){
+//			partA = pRITF +termFrequency / numberOfTokens;
+//		}else{
+//			partA = termFrequency / numberOfTokens;
 //		}
-//		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
-		return retvalue;
+////		if(partA != 0f){
+////			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
+////		}
+////		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
+//		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
+//		return retvalue;
+		
+		return pRITF * keyFrequency * log( pterm );
 	}
 	
 	
