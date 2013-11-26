@@ -52,17 +52,17 @@ public class EDLM extends WeightingModel {
 		float pRITF = Idf.log((numberOfDocuments  + 1f)/(documentFrequency) ) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
 //		pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
-		float partA = 0;
+		float partA = 0f;
 		if(tf > 0f){
-			partA = alpha *log( pRITF +termFrequency / numberOfTokens);
+			partA = pRITF +termFrequency / numberOfTokens;
 		}else{
-			partA = alpha *log(termFrequency / numberOfTokens);
+			partA = termFrequency / numberOfTokens;
 		}
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 //		}
 //		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
+		float retvalue = keyFrequency * log( partA + (1-alpha)* pterm );
 		return retvalue;
 	}
 
@@ -82,15 +82,15 @@ public class EDLM extends WeightingModel {
 		
 		float partA = 0f;
 		if(tf > 0f){
-			partA = alpha *log( pRITF +termFrequency / numberOfTokens);
+			partA = pRITF +termFrequency / numberOfTokens;
 		}else{
-			partA = alpha *log(termFrequency / numberOfTokens);
+			partA = termFrequency / numberOfTokens;
 		}
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 //		}
 //		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
+		float retvalue = keyFrequency * log( partA + (1-alpha)* pterm );
 		return retvalue;
 	}
 	
