@@ -2,7 +2,9 @@ package org.apache.lucene.search.model;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.postProcess.QueryExpansion;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
 import org.dutir.lucene.util.ApplicationSetup;
@@ -17,6 +19,7 @@ public class EDLM extends WeightingModel {
 	 */
 	static float mu = Integer.parseInt(ApplicationSetup.getProperty("dlm.mu", "1000"));
 	static float alpha = Float.parseFloat(ApplicationSetup.getProperty("edlm.alpha", "0.3"));
+	static Logger logger = Logger.getLogger(EDLM.class);
 	public EDLM() {
 		super();
 	}
@@ -45,11 +48,16 @@ public class EDLM extends WeightingModel {
 	
 	public final float score(float tf, float docLength, int innerid) {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
-		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
-		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]);
-		pRITF = RITF/(1+RITF);
+		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
+		float pRITF = Idf.log((numberOfDocuments - documentFrequency + 0.5f)/(documentFrequency +0.5) ) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
+//		pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
-		return keyFrequency * log(alpha * pRITF + (1-alpha)* pterm);
+		float partA = 0;
+		if(tf > 0f){
+			partA = alpha *log( pRITF);
+		}
+		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
+		return retvalue;
 	}
 
 	@Override
@@ -62,11 +70,16 @@ public class EDLM extends WeightingModel {
 			float keyFrequency, int innerid) {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
-		
-		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]);
-		pRITF = RITF/(1+RITF);
+		float pRITF = Idf.log((numberOfDocuments - n_t + 0.5f)/(n_t +0.5f)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
+//		pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * F_t / n_t)/ (docLength + mu);
-		return keyFrequency * log(alpha * pRITF + (1-alpha)* pterm);
+		
+		float partA = 0;
+		if(tf > 0f){
+			partA = alpha *log( pRITF);
+		}
+		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
+		return retvalue;
 	}
 	
 	
@@ -82,7 +95,6 @@ public class EDLM extends WeightingModel {
 		if(cache != null){
 			return SmallFloat.byte315ToFloat(cache[innerid]);
 		}else{
-//			cache = ATFCache.init(searcher);
 			ATFCache.initAll(searcher);
 			cache = ATFCache.cache;
 			norm = ATFCache.norm;

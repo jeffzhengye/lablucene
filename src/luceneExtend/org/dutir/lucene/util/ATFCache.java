@@ -1,5 +1,7 @@
 package org.dutir.lucene.util;
 
+import gnu.trove.TObjectFloatHashMap;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,10 +9,12 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.model.Idf;
 import org.apache.lucene.util.SmallFloat;
+import org.dutir.lucene.util.TermsCache.Item;
 import org.dutir.util.Arrays;
 
 /**
@@ -22,6 +26,8 @@ public class ATFCache {
 	static Logger logger = Logger.getLogger(ATFCache.class);
 	static String field = ApplicationSetup.getProperty(	
 			"Lucene.QueryExpansion.FieldName", "content");
+	static boolean rebuild = Boolean.parseBoolean(ApplicationSetup.getProperty(	
+			"ATFCache.rebuild", "false"));
 	/**
 	 * you should set a different path for every different collection.
 	 */
@@ -36,7 +42,31 @@ public class ATFCache {
 	public static byte[] cache = null;
 	public static byte[] norm = null;
 	
+	static TermsCache tcache = TermsCache.getInstance();
+	static TObjectFloatHashMap<String> idfCache = new TObjectFloatHashMap<String>();
+
+	static Item getItem(String term, Searcher searcher) {
+		Term lterm = new Term(field, term);
+		return tcache.getItem(lterm, searcher);
+	}
+	
+	static float getIDF(String term, float totalNumDocs, Searcher searcher){
+		float relVal = 0;
+		if(idfCache.containsKey(term)){
+			relVal = idfCache.get(term);
+		}else{
+			Item item = getItem(term, searcher);
+			float Nt = item.df;
+			relVal = Idf.log(( totalNumDocs -  Nt + 0.5d)
+					/ ( Nt + 0.5d));
+		}
+		return relVal;
+	}
+	
 	public static byte[] init(Searcher searcher){
+		if(rebuild){
+			build(searcher);
+		}
 		if(cache != null){
 			return cache;
 		}
@@ -48,6 +78,9 @@ public class ATFCache {
 	}
 	
 	public static void initAll(Searcher searcher){
+		if(rebuild){
+			build(searcher);
+		}
 		if(cache != null && norm !=null){
 			return;
 		}
@@ -180,7 +213,10 @@ public class ATFCache {
 					float sumRITF = 0f;
 					float denominator = Idf.log(1 + atf);
 					for(int j=0; j < freqs.length; j++){
-						sumRITF += Idf.log(1 + freqs[j])/denominator;
+						
+//						float AEF = termFrequency/df;
+						float IDF = getIDF(strterms[j], numofdoc, searcher);
+						sumRITF += IDF * Idf.log(1 + freqs[j])/denominator ;
 					}
 					cache[i] = SmallFloat.floatToByte315(atf);
 					norm[i] = SmallFloat.floatToByte315(sumRITF);

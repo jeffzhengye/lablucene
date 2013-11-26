@@ -47,7 +47,7 @@ public class EMATF extends WeightingModel {
 		
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 		
-		RITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
+		RITF = Idf.log((numberOfDocuments + 1)/this.documentFrequency) * RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
 		
 		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
 		float BRITF = RITF/ (1 + RITF);
@@ -97,7 +97,7 @@ public class EMATF extends WeightingModel {
 			float alpha = 2 / (1 + Idf.log(1 + QLF));
 			
 			float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
-			RITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
+			RITF = Idf.log((numberOfDocuments + 1)/n_t) * RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
 			
 			float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
 			float BRITF = RITF/ (1 + RITF);
