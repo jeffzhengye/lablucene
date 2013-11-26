@@ -59,7 +59,7 @@ public class EDLM extends WeightingModel {
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 //		}
-		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
+//		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
 		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
 		return retvalue;
 	}
@@ -80,12 +80,12 @@ public class EDLM extends WeightingModel {
 		
 		float partA = 0f;
 		if(tf > 0f){
-			partA = alpha *log( pRITF);
+			partA = alpha *log(pterm);
 		}
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 //		}
-		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
+//		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
 		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
 		return retvalue;
 	}
