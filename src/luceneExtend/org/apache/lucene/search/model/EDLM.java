@@ -62,7 +62,7 @@ public class EDLM extends WeightingModel {
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 //		}
 //		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-		float retvalue = keyFrequency * log( partA + (1-alpha)* pterm );
+		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
 		return retvalue;
 	}
 
@@ -90,7 +90,7 @@ public class EDLM extends WeightingModel {
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 //		}
 //		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-		float retvalue = keyFrequency * log( partA + (1-alpha)* pterm );
+		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
 		return retvalue;
 	}
 	
