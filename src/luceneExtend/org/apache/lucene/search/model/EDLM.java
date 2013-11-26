@@ -57,7 +57,7 @@ public class EDLM extends WeightingModel {
 			partA = alpha *log( pRITF);
 		}
 		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
-		return keyFrequency * ( (1-alpha)* log(pterm) );
+		return retvalue;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class EDLM extends WeightingModel {
 			partA = alpha *log( pRITF);
 		}
 		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
-		return keyFrequency * ( (1-alpha)* log(pterm) );
+		return retvalue;
 	}
 	
 	
