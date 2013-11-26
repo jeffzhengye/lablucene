@@ -56,7 +56,7 @@ public class EDLM extends WeightingModel {
 		if(tf > 0f){
 			partA = alpha *log( pRITF);
 		}else{
-			partA = alpha *log(pterm);
+//			partA = alpha *log(pterm);
 		}
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
@@ -84,7 +84,7 @@ public class EDLM extends WeightingModel {
 		if(tf > 0f){
 			partA = alpha *log(pRITF);
 		}else{
-			partA = alpha *log(pterm);
+//			partA = alpha *log(pterm);
 		}
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
