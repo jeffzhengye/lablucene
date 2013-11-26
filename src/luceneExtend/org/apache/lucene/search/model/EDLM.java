@@ -56,6 +56,9 @@ public class EDLM extends WeightingModel {
 		if(tf > 0f){
 			partA = alpha *log( pRITF);
 		}
+		if(partA != 0f){
+			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
+		}
 		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
 		return retvalue;
 	}
@@ -74,9 +77,12 @@ public class EDLM extends WeightingModel {
 //		pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * F_t / n_t)/ (docLength + mu);
 		
-		float partA = 0;
+		float partA = 0f;
 		if(tf > 0f){
 			partA = alpha *log( pRITF);
+		}
+		if(partA != 0f){
+			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
 		}
 		float retvalue = keyFrequency * ( partA + (1-alpha)* log(pterm) );
 		return retvalue;
