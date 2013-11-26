@@ -54,7 +54,9 @@ public class EDLM extends WeightingModel {
 		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
 		float partA = 0;
 		if(tf > 0f){
-			partA = alpha *log( pterm);
+			partA = alpha *log( pRITF);
+		}else{
+			partA = alpha *log(pterm);
 		}
 //		if(partA != 0f){
 //			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
@@ -80,6 +82,8 @@ public class EDLM extends WeightingModel {
 		
 		float partA = 0f;
 		if(tf > 0f){
+			partA = alpha *log(pRITF);
+		}else{
 			partA = alpha *log(pterm);
 		}
 //		if(partA != 0f){
