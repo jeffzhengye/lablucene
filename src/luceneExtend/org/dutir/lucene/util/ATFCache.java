@@ -57,8 +57,7 @@ public class ATFCache {
 		}else{
 			Item item = getItem(term, searcher);
 			float Nt = item.df;
-			relVal = Idf.log(( totalNumDocs -  Nt + 0.5d)
-					/ ( Nt + 0.5d));
+			relVal = Idf.log(( totalNumDocs + 1f)/Nt);
 		}
 		return relVal;
 	}
