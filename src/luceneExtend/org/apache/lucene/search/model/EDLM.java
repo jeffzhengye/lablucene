@@ -65,7 +65,7 @@ public class EDLM extends WeightingModel {
 		
 		float bm25tf = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
 		float bbtf = bm25tf/(1 + bm25tf);
-		return keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * bbtf;
+		return keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (alpha*bbtf +(1-alpha)*BLRTF);
 	}
 
 	@Override
