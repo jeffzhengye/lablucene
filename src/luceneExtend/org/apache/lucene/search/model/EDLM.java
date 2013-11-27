@@ -48,24 +48,40 @@ public class EDLM extends WeightingModel {
 	}
 	
 	public final float score(float tf, float docLength, int innerid) {
-//		alpha = 2 / (1 + Idf.log(1 + querylength));
+////		alpha = 2 / (1 + Idf.log(1 + querylength));
+//		float AEF = this.termFrequency/this.documentFrequency;
+//		
+//		float RITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
+//		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
+////		float pRITF = RITF/(1+RITF);
+//		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
+//		float spRITF = alpha1 * pRITF + (1- alpha1) * (mu * termFrequency / numberOfTokens)/ (docLength + mu);
+//
+//		float retvalue = keyFrequency * log( alpha* spRITF + (1-alpha)* pterm );
+//		float k_1 = 1.2f; float b = Float.parseFloat(ApplicationSetup.getProperty("bm25.b", "0.35"));
+////		return  keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf) ;
+//		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+//		float BLRTF = LRTF / (1 + LRTF);
+//		
+//		float bm25tf = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
+//		float bbtf = bm25tf/(1 + bm25tf);
+//		return keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (alpha*bbtf +(1-alpha)*BLRTF);
+		
 		float AEF = this.termFrequency/this.documentFrequency;
 		
-		float RITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
-		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
-//		float pRITF = RITF/(1+RITF);
-		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
-		float spRITF = alpha1 * pRITF + (1- alpha1) * (mu * termFrequency / numberOfTokens)/ (docLength + mu);
-
-		float retvalue = keyFrequency * log( alpha* spRITF + (1-alpha)* pterm );
-		float k_1 = 1.2f; float b = Float.parseFloat(ApplicationSetup.getProperty("bm25.b", "0.35"));
-//		return  keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf) ;
+		
+		float IDF = Idf.log((numberOfDocuments + 1)/this.documentFrequency) * AEF/(1 + AEF);
+		float alpha = 2 / (1 + Idf.log(1 + querylength));
+		
+		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+		
+		float BRITF = RITF/ (1 + RITF);
 		float BLRTF = LRTF / (1 + LRTF);
 		
-		float bm25tf = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
-		float bbtf = bm25tf/(1 + bm25tf);
-		return keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (alpha*bbtf +(1-alpha)*BLRTF);
+		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+	    
+	    return keyFrequency * TFF * IDF;
 	}
 
 	@Override
