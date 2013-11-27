@@ -50,6 +50,10 @@ public class MATF extends WeightingModel {
 		
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+		
+//		float k_1 = 1.2f, b = 0.3f;
+//		LRTF =  (k_1 + 1f) *tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf) ;
+		
 		float BRITF = RITF/ (1 + RITF);
 		float BLRTF = LRTF / (1 + LRTF);
 		
@@ -89,21 +93,25 @@ public class MATF extends WeightingModel {
 			float F_t,
 			float keyFrequency, int innerid) {
 			
-			float AEF = F_t/n_t;
-			
-			float IDF = Idf.log((numberOfDocuments + 1)/n_t) * AEF/(1 + AEF);
-			
-			float QLF = this.querylength;
-			float alpha = 2 / (1 + Idf.log(1 + QLF));
-			
-			float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
-			float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
-			float BRITF = RITF/ (1 + RITF);
-			float BLRTF = LRTF / (1 + LRTF);
-			
-			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+//			float AEF = F_t/n_t;
+//			
+//			float IDF = Idf.log((numberOfDocuments + 1)/n_t) * AEF/(1 + AEF);
+//			
+//			float QLF = this.querylength;
+//			float alpha = 2 / (1 + Idf.log(1 + QLF));
+//			
+//			float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
+//			float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+//			float BRITF = RITF/ (1 + RITF);
+//			float BLRTF = LRTF / (1 + LRTF);
+//			
+//			float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
 		    
-		    return keyFrequency * TFF * IDF;
+//		    return keyFrequency * TFF * IDF;
+			this.keyFrequency = keyFrequency;
+			this.documentFrequency = n_t;
+			this.termFrequency = F_t;
+			return score(tf, docLength, innerid);
 		}
 	
 	static Jedis jedis = new Jedis("127.0.0.1", 6379, 100000); // zheng's

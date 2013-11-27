@@ -19,6 +19,7 @@ public class EDLM extends WeightingModel {
 	 */
 	static float mu = Integer.parseInt(ApplicationSetup.getProperty("dlm.mu", "1000"));
 	static float alpha = Float.parseFloat(ApplicationSetup.getProperty("edlm.alpha", "0.3"));
+	static float alpha1 = Float.parseFloat(ApplicationSetup.getProperty("edlm.alpha1", "0.3"));
 	static Logger logger = Logger.getLogger(EDLM.class);
 	public EDLM() {
 		super();
@@ -38,7 +39,7 @@ public class EDLM extends WeightingModel {
 	 */
 	
 	public final String getInfo(){
-		return "EDLM" + (int)mu + "alpha=" + alpha;
+		return "EDLM" + (int)mu + "alpha=" + alpha+ "alpha1=" + alpha1;
 	}
 
 	@Override
@@ -48,23 +49,23 @@ public class EDLM extends WeightingModel {
 	
 	public final float score(float tf, float docLength, int innerid) {
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
+		float AEF = this.termFrequency/this.documentFrequency;
+		
 		float RITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
-//		float pRITF = Idf.log((numberOfDocuments  + 1f)/(documentFrequency) ) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
-		float pRITF = RITF/(1+RITF);
+		float pRITF = RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
+//		float pRITF = RITF/(1+RITF);
 		float pterm = (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu);
-//		float partA = 0f;
-//		if(tf > 0f){
-//			partA = pRITF +termFrequency / numberOfTokens;
-//		}else{
-//			partA = termFrequency / numberOfTokens;
-//		}
-////		if(partA != 0f){
-////			logger.warn(alpha + ":" + pRITF + ":" + log( pRITF));
-////		}
-////		logger.warn(RITF + ":" + pRITF + ":" + log( pRITF) + ":" + log(pterm));
-//		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
-//		return retvalue;
-		return pRITF * keyFrequency * log( pterm );
+		float spRITF = alpha1 * pRITF + (1- alpha1) * (mu * termFrequency / numberOfTokens)/ (docLength + mu);
+
+		float retvalue = keyFrequency * log( alpha* spRITF + (1-alpha)* pterm );
+		float k_1 = 1.2f; float b = Float.parseFloat(ApplicationSetup.getProperty("bm25.b", "0.35"));
+//		return  keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf) ;
+		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
+		float BLRTF = LRTF / (1 + LRTF);
+		
+		float bm25tf = (k_1 + 1f) * tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf);
+		float bbtf = bm25tf/(1 + bm25tf);
+		return keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * bbtf;
 	}
 
 	@Override
@@ -75,11 +76,15 @@ public class EDLM extends WeightingModel {
 	
 	public float score(float tf, float docLength, float n_t, float F_t,
 			float keyFrequency, int innerid) {
+		this.keyFrequency = keyFrequency;
+		this.documentFrequency = n_t;
+		this.termFrequency = F_t;
+		return score(tf, docLength, innerid);
 //		alpha = 2 / (1 + Idf.log(1 + querylength));
-		float RITF = Idf.log((numberOfDocuments + 1f)/(n_t)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
+//		float RITF = Idf.log((numberOfDocuments + 1f)/(n_t)) * Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 //		float pRITF = Idf.log((numberOfDocuments + 1f)/(n_t)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]);
-		float pRITF = RITF/(1+RITF);
-		float pterm = (tf + mu * F_t / n_t)/ (docLength + mu);
+//		float pRITF = RITF/(1+RITF);
+//		float pterm = (tf + mu * F_t / n_t)/ (docLength + mu);
 		
 //		float partA = 0f;
 //		if(tf > 0f){
@@ -94,7 +99,6 @@ public class EDLM extends WeightingModel {
 //		float retvalue = keyFrequency * log( alpha* partA + (1-alpha)* pterm );
 //		return retvalue;
 		
-		return pRITF * keyFrequency * log( pterm );
 	}
 	
 	
