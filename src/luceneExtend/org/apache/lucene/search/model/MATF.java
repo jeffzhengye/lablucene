@@ -51,9 +51,6 @@ public class MATF extends WeightingModel {
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
 		
-//		float k_1 = 1.2f, b = 0.3f;
-//		LRTF =  (k_1 + 1f) *tf / (k_1 * ((1 - b) + b * docLength / averageDocumentLength) + tf) ;
-		
 		float BRITF = RITF/ (1 + RITF);
 		float BLRTF = LRTF / (1 + LRTF);
 		
