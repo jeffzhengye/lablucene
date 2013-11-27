@@ -68,10 +68,9 @@ public class EDLM extends WeightingModel {
 //		return keyFrequency * Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * (alpha*bbtf +(1-alpha)*BLRTF);
 		
 		float AEF = this.termFrequency/this.documentFrequency;
-		AEF =1f;
 		
 		float IDF = Idf.log((numberOfDocuments + 1)/this.documentFrequency) * AEF/(1 + AEF);
-		float alpha = 2 / (1 + Idf.log(1 + querylength));
+//		float alpha = 2 / (1 + Idf.log(1 + querylength));
 		
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));
 		float LRTF = tf * Idf.log(1 + averageDocumentLength/docLength);
