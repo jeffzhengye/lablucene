@@ -12,7 +12,7 @@ public class Hiemstra_LM extends WeightingModel {
 
 	public Hiemstra_LM() {
 		super();
-		this.c = 0.15f;
+//		this.c = 0.15f;
 
 	}
 

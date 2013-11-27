@@ -69,9 +69,9 @@ public class EDLM extends WeightingModel {
 		
 //		float AEF = this.termFrequency/this.documentFrequency;
 		
-//		return keyFrequency * log( (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) )+
-				
-		return keyFrequency * log(alpha* termFrequency/numberOfTokens + (1-alpha)* tf/docLength);
+		alpha = 0.15f;
+		return alpha1 * keyFrequency * log( (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) )+
+				(1-alpha1)* keyFrequency * log(alpha* termFrequency/numberOfTokens + (1-alpha)* tf/docLength);
 
 	}
 
