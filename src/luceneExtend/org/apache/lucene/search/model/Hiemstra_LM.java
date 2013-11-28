@@ -1,6 +1,8 @@
 
 package org.apache.lucene.search.model;
 
+import org.dutir.lucene.util.ApplicationSetup;
+
 /**
  *
  *According to Zhai
@@ -12,7 +14,7 @@ public class Hiemstra_LM extends WeightingModel {
 
 	public Hiemstra_LM() {
 		super();
-//		this.c = 0.15f;
+		this.c = Float.parseFloat(ApplicationSetup.getProperty("wm.c", "0.15"));
 
 	}
 
