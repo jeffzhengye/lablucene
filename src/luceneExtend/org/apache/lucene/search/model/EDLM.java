@@ -48,7 +48,7 @@ public class EDLM extends WeightingModel {
 	}
 	
 	public final float score(float tf, float docLength, int innerid) {
-		alpha = 2 / (1 + Idf.log(1 + querylength));
+		alpha = 2 / (1.5f + Idf.log(1 + querylength));
 //		float AEF = this.termFrequency/this.documentFrequency;
 //		
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
