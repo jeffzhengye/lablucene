@@ -636,7 +636,7 @@ public class TRECQuerying {
 					long processingEnd = System.currentTimeMillis();
 					if (logger.isInfoEnabled())
 						logger.info("Time to process query: "
-								+ bquery.getTopicId() + " -- "
+								+ bquery.getTopicId() + ":" + bquery.getqueryLen() + ":"
 								+ ((processingEnd - processingStart) / 1000.0D)
 								+ " S");
 					doneSomeTopics = true;

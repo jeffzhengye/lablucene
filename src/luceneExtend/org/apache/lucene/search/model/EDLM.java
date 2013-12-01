@@ -75,7 +75,7 @@ public class EDLM extends WeightingModel {
 		
 //		return keyFrequency * log( (1-pRITF)* termFrequency/numberOfTokens + pRITF* tf/docLength);
 		
-		return  keyFrequency * log( (tf*(1 -alpha + alpha *pRITF) + mu * termFrequency / numberOfTokens)/ (docLength + mu) );
+		return  keyFrequency * log( (tf + mu * termFrequency / numberOfTokens)*(1 -alpha + alpha *pRITF)/ (docLength + mu) );
 
 	}
 
