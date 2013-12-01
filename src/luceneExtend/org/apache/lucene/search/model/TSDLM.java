@@ -45,7 +45,7 @@ public class TSDLM extends WeightingModel {
 //		float pRITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
 		float pRITF = RITF/(1+RITF);
 		lambda = pRITF;
-		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) - (1-lambda)*termFrequency / numberOfTokens);
+		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*termFrequency / numberOfTokens);
 	}
 
 	@Override
