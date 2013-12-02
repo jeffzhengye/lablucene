@@ -48,7 +48,7 @@ public class TSDLM extends WeightingModel {
 		float pRITF = RITF/(1+RITF);
 //		lambda = 2 / (1f + Idf.log(1 + querylength));
 		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + pRITF/documentFrequency);
-		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF+0.1)/documentFrequency);
+		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF+0.1f)/documentFrequency);
 	}
 
 	@Override
