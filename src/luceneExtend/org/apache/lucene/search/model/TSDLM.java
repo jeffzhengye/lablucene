@@ -2,6 +2,7 @@ package org.apache.lucene.search.model;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
@@ -17,6 +18,7 @@ public class TSDLM extends WeightingModel {
 	 */
 	static float mu = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.mu", ApplicationSetup.getProperty("dlm.mu", "1000")));
 	static float lambda = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.lambda", "0.9"));
+	static Logger logger = Logger.getLogger(TSDLM.class);
 	public TSDLM() {
 		super();
 	}
@@ -44,7 +46,8 @@ public class TSDLM extends WeightingModel {
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
 //		float pRITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
 		float pRITF = RITF/(1+RITF);
-		lambda = 2 / (1f + Idf.log(1 + querylength));
+//		lambda = 2 / (1f + Idf.log(1 + querylength));
+		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + pRITF/documentFrequency);
 		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*pRITF/documentFrequency);
 	}
 
