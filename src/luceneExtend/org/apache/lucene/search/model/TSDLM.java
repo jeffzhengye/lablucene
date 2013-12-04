@@ -74,7 +74,9 @@ public class TSDLM extends WeightingModel {
 //		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(RITF+0.1f)/_cRITF);
 		
 //		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
-//		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + (pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1));
+		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + 
+				":" + (pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1) +
+				":" + termFrequency / numberOfTokens + ":" + _cRITF /colLen());
 		return keyFrequency * log( (1-lambda) *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (lambda)*(pRITF + mu1 * _cRITF /colLen() )/ (docLen(innerid) + mu1) );
 	}
 
