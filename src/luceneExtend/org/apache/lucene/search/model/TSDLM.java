@@ -58,6 +58,7 @@ public class TSDLM extends WeightingModel {
 //		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + (RITF+0.1f)/_cRITF +":" + termFrequency / numberOfTokens);
 //		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(RITF+0.1f)/_cRITF);
 		
+		docLength = 
 		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
 	}
 
@@ -152,7 +153,14 @@ public class TSDLM extends WeightingModel {
 		}
 		return SmallFloat.byte315ToFloat(norm[innerid]);
 	}
-	
+	private float docLen(int innerid){
+		if(norm == null){
+			ATFCache.initAll(searcher);
+			cache = ATFCache.cache;
+			norm = ATFCache.norm;
+		}
+		return SmallFloat.byte315ToFloat(norm[innerid]);
+	}
 	private float colLen() {
 		if(clen > 0f){
 			return clen;
