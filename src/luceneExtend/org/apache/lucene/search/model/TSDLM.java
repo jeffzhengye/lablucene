@@ -53,6 +53,20 @@ public class TSDLM extends WeightingModel {
 		float pRITF = RITF/(1+RITF);
 		float _cRITF = getCRITF();
 //		lambda = 1 / (0f + Idf.log(1 + querylength));
+		switch ((int) querylength) {
+		case (int) 1:
+			lambda = 1;
+			break;
+		case 2:
+			lambda = 2 / (1f + Idf.log(1 + querylength));
+			break;
+		case 3: 
+			lambda = 0.05f;
+			break;
+		default:
+			lambda = 0f;
+			break;
+		}
 //		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + pRITF/documentFrequency);
 //		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF+0.1f)/documentFrequency);
 		
