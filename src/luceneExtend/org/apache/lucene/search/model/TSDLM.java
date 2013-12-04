@@ -3,10 +3,12 @@ package org.apache.lucene.search.model;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
 import org.dutir.lucene.util.ApplicationSetup;
+import org.dutir.lucene.util.Lredis;
 /**
  * This class implements the Two-stage LM weighting model.
  * @author Zheng Ye
@@ -19,6 +21,8 @@ public class TSDLM extends WeightingModel {
 	static float mu = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.mu", ApplicationSetup.getProperty("dlm.mu", "1000")));
 	static float lambda = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.lambda", "0.9"));
 	static Logger logger = Logger.getLogger(TSDLM.class);
+	float cRITF = 0f;
+	static float clen = 0f;
 	public TSDLM() {
 		super();
 	}
@@ -46,9 +50,42 @@ public class TSDLM extends WeightingModel {
 		float RITF = Idf.log(1 + tf)/Idf.log(1 + AvgTF(docLength, innerid));	
 //		float pRITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
 		float pRITF = RITF/(1+RITF);
+		float _cRITF = getCRITF();
 //		lambda = 2 / (1f + Idf.log(1 + querylength));
-		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + pRITF/documentFrequency);
-		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF+0.1f)/documentFrequency);
+//		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + pRITF/documentFrequency);
+//		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF+0.1f)/documentFrequency);
+		
+//		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + (RITF+0.1f)/_cRITF +":" + termFrequency / numberOfTokens);
+//		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(RITF+0.1f)/_cRITF);
+		
+		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
+	}
+
+	
+	static Lredis lredis = Lredis.getDefault();
+	private float getCRITF() {
+		try {
+			if(cRITF > 0){
+//				logger.info("from cache cRITF");
+				return cRITF;
+			}
+			if(lredis.has(this.query.getTerm().text(), true)){
+				cRITF = Float.parseFloat(lredis.get(this.query.getTerm().text(), true)); 
+				return cRITF;
+			}
+			TermDocs tdocs = this.searcher.getIndexReader().termDocs(this.query.getTerm());
+			
+			while(tdocs.next()){
+				int docid = tdocs.doc();
+				cRITF += Idf.log(1 + docid)/Idf.log(1 + AvgTF(this.searcher.getFieldLength(field, docid), docid));
+			}
+			lredis.put(this.query.getTerm().text(), Float.toString(cRITF), true);
+			logger.info("from online computing");
+			return cRITF;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 	@Override
@@ -105,6 +142,30 @@ public class TSDLM extends WeightingModel {
 			e.printStackTrace();
 		}
 		throw new RuntimeException("run time error");
+	}
+	
+	private float avlDL(float docLength, int innerid) {
+		if(norm == null){
+			ATFCache.initAll(searcher);
+			cache = ATFCache.cache;
+			norm = ATFCache.norm;
+		}
+		return SmallFloat.byte315ToFloat(norm[innerid]);
+	}
+	
+	private float colLen() {
+		if(clen > 0f){
+			return clen;
+		}
+		if(norm == null){
+			ATFCache.initAll(searcher);
+			cache = ATFCache.cache;
+			norm = ATFCache.norm;
+		}
+		for(int i =0; i < norm.length; i++){
+			clen += SmallFloat.byte315ToFloat(norm[i]);
+		}
+		return clen;
 	}
 	
 //	/**

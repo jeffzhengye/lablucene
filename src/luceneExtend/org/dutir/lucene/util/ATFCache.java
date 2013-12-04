@@ -212,10 +212,10 @@ public class ATFCache {
 					float sumRITF = 0f;
 					float denominator = Idf.log(1 + atf);
 					for(int j=0; j < freqs.length; j++){
-						
 //						float AEF = termFrequency/df;
-						float IDF = getIDF(strterms[j], numofdoc, searcher);
-						sumRITF += IDF * Idf.log(1 + freqs[j])/denominator ;
+//						float IDF = getIDF(strterms[j], numofdoc, searcher);
+//						sumRITF += IDF * Idf.log(1 + freqs[j])/denominator ;
+						sumRITF += Idf.log(1 + freqs[j])/denominator ;
 					}
 					cache[i] = SmallFloat.floatToByte315(atf);
 					norm[i] = SmallFloat.floatToByte315(sumRITF);

@@ -51,6 +51,7 @@ public class WeightModelManager {
 							averageFiledLength, numberOfTokens,
 							numberOfUniqueTerms, df, query.getOccurNum(), termFreq, query.getqueryLen());
 				model.setSearcher(searcher);
+				model.setQuery(query);
 
 				return model;
 			} catch (InstantiationException e) {
@@ -109,7 +110,8 @@ public class WeightModelManager {
 						averageFiledLength, numberOfTokens,
 						numberOfUniqueTerms, df, query.getOccurNum(), termFreq, query.getqueryLen());
 			model.setSearcher(searcher);
-
+//			model.setQuery(query);
+			
 			return model;
 		} catch (InstantiationException e) {
 			e.printStackTrace();
@@ -151,7 +153,6 @@ public class WeightModelManager {
 						averageFiledLength, numberOfTokens,
 						numberOfUniqueTerms, df, 1, termFreq, -1); // this may have problem to set querylength = -1;
 			model.setSearcher(searcher);
-
 			return model;
 		} catch (InstantiationException e) {
 			e.printStackTrace();

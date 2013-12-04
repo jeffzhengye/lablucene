@@ -30,11 +30,13 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 	public float numberOfUniqueTerms;	
 	public float querylength;
 	public Searcher searcher;
+	protected RTermQuery query;
 
 	/**
 	 * A default constructor that initialises the idf i attribute
 	 */
 	public WeightingModel() {
+		
 	}
 
 	/** Clone this weighting model */
@@ -80,6 +82,14 @@ public abstract class WeightingModel implements Serializable,Cloneable {
 	
 	public void setSearcher(Searcher searcher){
 		this.searcher = searcher;
+	}
+	
+	public void setQuery( RTermQuery query){
+		this.query = query;
+	}
+	
+	public String getQueryTerm(){
+		return this.query.getTerm().text();
 	}
 	
 	public void prepare(float numberOfDocuments, float averageDocumentLength, float numberOfTokens, 
