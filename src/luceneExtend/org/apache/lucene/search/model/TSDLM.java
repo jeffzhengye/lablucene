@@ -61,7 +61,7 @@ public class TSDLM extends WeightingModel {
 			lambda = 2 / (1f + Idf.log(1 + querylength));
 			break;
 		case 3: 
-			lambda = 0.05f;
+			lambda = 0.0005f;
 			break;
 		default:
 			lambda = 0f;
