@@ -59,7 +59,8 @@ public class TSDLM extends WeightingModel {
 //		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(RITF+0.1f)/_cRITF);
 		
 		docLength = docLen(innerid); 
-		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
+//		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
+		return keyFrequency * log( (pRITF + mu * _cRITF /colLen() )/ (docLength + mu));
 	}
 
 	
@@ -78,7 +79,9 @@ public class TSDLM extends WeightingModel {
 			
 			while(tdocs.next()){
 				int docid = tdocs.doc();
-				cRITF += Idf.log(1 + docid)/Idf.log(1 + AvgTF(this.searcher.getFieldLength(field, docid), docid));
+				float RITF =  Idf.log(1 + docid)/Idf.log(1 + AvgTF(this.searcher.getFieldLength(field, docid), docid));
+				RITF = RITF/(1+RITF);
+				cRITF += RITF;
 			}
 			lredis.put(this.query.getTerm().text(), Float.toString(cRITF), true);
 			logger.info("from online computing");
