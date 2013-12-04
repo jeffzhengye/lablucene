@@ -52,7 +52,7 @@ public class TSDLM extends WeightingModel {
 //		float pRITF = Idf.log((numberOfDocuments + 1f)/(documentFrequency)) * RITF/SmallFloat.byte315ToFloat(norm[innerid]) * docLength/AvgTF(docLength, innerid);
 		float pRITF = RITF/(1+RITF);
 		float _cRITF = getCRITF();
-		lambda = 1 / (0f + Idf.log(1 + querylength));
+//		lambda = 1 / (0f + Idf.log(1 + querylength));
 //		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + pRITF/documentFrequency);
 //		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF+0.1f)/documentFrequency);
 		
@@ -61,7 +61,7 @@ public class TSDLM extends WeightingModel {
 		
 		docLength = docLen(innerid); 
 //		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
-		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + (pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1));
+//		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + (pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1));
 		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1) );
 	}
 
