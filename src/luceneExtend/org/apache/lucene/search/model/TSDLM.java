@@ -19,6 +19,7 @@ public class TSDLM extends WeightingModel {
 	 * A default constructor. Uses the default value of mu=1000.
 	 */
 	static float mu = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.mu", ApplicationSetup.getProperty("dlm.mu", "1000")));
+	static float mu1 = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.mu1", "3000"));
 	static float lambda = Float.parseFloat(ApplicationSetup.getProperty("tsdlm.lambda", "0.9"));
 	static Logger logger = Logger.getLogger(TSDLM.class);
 	float cRITF = 0f;
@@ -60,7 +61,8 @@ public class TSDLM extends WeightingModel {
 		
 		docLength = docLen(innerid); 
 //		return keyFrequency * log( (RITF + mu * _cRITF /colLen() )/ (docLength + mu));
-		return keyFrequency * log( (pRITF + mu * _cRITF /colLen() )/ (docLength + mu));
+		logger.info("" + tf +":" + (tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + ":" + (pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1));
+		return keyFrequency * log( lambda *(tf + mu * termFrequency / numberOfTokens)/ (docLength + mu) + (1-lambda)*(pRITF + mu1 * _cRITF /colLen() )/ (docLength + mu1) );
 	}
 
 	
