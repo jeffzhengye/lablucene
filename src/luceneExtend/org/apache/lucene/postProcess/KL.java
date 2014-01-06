@@ -20,7 +20,7 @@ public class KL extends QueryExpansionModel {
 	 */
 	public final String getInfo() {
 		if (PARAMETER_FREE)
-			return "KLbfree";
+			return "MKLbfree";
 		return "KLb" + ROCCHIO_BETA;
 	}
 
@@ -67,12 +67,15 @@ public class KL extends QueryExpansionModel {
 	 *         Kullback-Leibler divergence.
 	 */
 	public final float score(float withinDocumentFrequency, float termFrequency, float df) {
+		float RITF = Idf.log(1 + withinDocumentFrequency)/Idf.log(1 + AVF);
+		float BRITF = RITF/ (1 + RITF);
+		
 		float docLevel = withinDocumentFrequency / this.totalDocumentLength;
 		float colLevel = termFrequency / this.collectionLength;
 		if (docLevel < colLevel)
 			return 0;
 		else
-			return (float) (docLevel * Idf.log(docLevel, colLevel));
+			return (float) (BRITF*docLevel * Idf.log(docLevel, colLevel));
 	}
 
 	/**
@@ -94,11 +97,15 @@ public class KL extends QueryExpansionModel {
 			float termFrequency, float totalDocumentLength,
 			float collectionLength, float averageDocumentLength
 			,float df) {
+		
+		float RITF = Idf.log(1 + withinDocumentFrequency)/Idf.log(1 + AVF);
+		float BRITF = RITF/ (1 + RITF);
+		
 		if (withinDocumentFrequency / totalDocumentLength < termFrequency
 				/ collectionLength)
 			return 0;
 		else
-			return (float) (withinDocumentFrequency / totalDocumentLength * Idf
+			return (float) BRITF*(withinDocumentFrequency / totalDocumentLength * Idf
 					.log(withinDocumentFrequency / totalDocumentLength,
 							termFrequency / collectionLength));
 	}
