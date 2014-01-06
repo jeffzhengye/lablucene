@@ -12,6 +12,7 @@ import redis.clients.jedis.Jedis;
 
 /**
  * This class implements the MATF weighting model in A Novel TF-IDF Weighting Scheme for Effective Ranking. 
+ * Just to test the combination methods of linear and multiply  
  */
 public class TFMIDF extends WeightingModel {
 	static Logger logger = Logger.getLogger(TFMIDF.class);

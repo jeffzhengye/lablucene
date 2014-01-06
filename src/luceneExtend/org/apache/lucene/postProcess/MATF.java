@@ -29,6 +29,8 @@
 */
 package org.apache.lucene.postProcess;
 
+import gnu.trove.TObjectDoubleHashMap;
+
 import org.apache.lucene.search.model.Idf;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
@@ -37,14 +39,27 @@ import org.dutir.lucene.util.ApplicationSetup;
 import redis.clients.jedis.Jedis;
 
 public class MATF extends QueryExpansionModel {
-
+	
 	static byte cache[] = null;
-	@Override
-	public String getInfo() {
-		// TODO Auto-generated method stub
-		return "MATF"+ ROCCHIO_BETA;
+	protected float ktf = -1f;
+	static float lambda = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda", "0.9"));
+	
+	public float getKtf() {
+		return ktf;
 	}
 
+
+	public void setKtf(float ktf) {
+		this.ktf = ktf;
+	}
+
+
+	@Override
+	public String getInfo() {
+		return "MATF"+ ROCCHIO_BETA + (ktf == -1f? "": "lambda="+lambda);
+	}
+
+	
 	@Override
 	public float parameterFreeNormaliser() {
 		throw new RuntimeException("TFIDF feedback error");
@@ -98,6 +113,9 @@ public class MATF extends QueryExpansionModel {
 		float BLRTF = LRTF / (1 + LRTF);
 		
 		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+		if(ktf >= 0){
+			TFF += ktf/(1+ktf) * lambda;
+		}
 	    
 	    return TFF * IDF;
 	}

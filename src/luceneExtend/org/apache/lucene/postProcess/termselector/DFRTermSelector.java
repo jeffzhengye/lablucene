@@ -30,11 +30,14 @@
 package org.apache.lucene.postProcess.termselector;
 
 
+import gnu.trove.TObjectDoubleHashMap;
+
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.TermPositionVector;
+import org.apache.lucene.postProcess.MATF;
 import org.apache.lucene.postProcess.QueryExpansionModel;
 import org.dutir.lucene.util.ApplicationSetup;
 import org.dutir.lucene.util.TermsCache;
@@ -51,6 +54,15 @@ public class DFRTermSelector extends TermSelector {
 		this.setMetaInfo("normalize.weights", "true");
 	}
 	
+	TObjectDoubleHashMap<String> fscore = null;
+	
+	public TObjectDoubleHashMap<String> getFscore() {
+		return fscore;
+	}
+	
+	public void setFscore(TObjectDoubleHashMap<String> fscore) {
+		this.fscore = fscore;
+	}
 	
 	public void assignTermWeights(int[] docids, float scores[], QueryExpansionModel QEModel) {
 		this.getTerms(docids);
@@ -119,6 +131,9 @@ public class DFRTermSelector extends TermSelector {
 				float TF = item.ctf;
 				float DF = item.df;
 				QEModel.setAVF(ATF); // currently this is for MAFT query expansion.
+				if(fscore != null && QEModel instanceof MATF){
+					((MATF) QEModel).setKtf((float) fscore.get(allTerms[i].getTerm()));
+				}
 //				assert(originalQueryLength != 0);
 //				QEModel.setOriginalQueryLength(originalQueryLength);
 //				logger.warn("" + originalQueryLength + ":" + QEModel.getOriginalQueryLength());
