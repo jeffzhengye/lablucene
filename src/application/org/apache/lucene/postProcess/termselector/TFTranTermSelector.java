@@ -1,11 +1,9 @@
 package org.apache.lucene.postProcess.termselector;
 
 import gnu.trove.TObjectDoubleHashMap;
-import gnu.trove.TObjectFloatHashMap;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.commons.math.distribution.NormalDistributionImpl;
@@ -17,10 +15,7 @@ import org.dutir.lucene.IndexUtility;
 import org.dutir.lucene.util.ApplicationSetup;
 import org.dutir.lucene.util.Distance;
 import org.dutir.lucene.util.TermsCache;
-import org.dutir.lucene.util.ExpansionTerms.ExpansionTerm;
-import org.dutir.util.Math;
 import org.dutir.util.Normalizer;
-import org.apache.lucene.postProcess.MATF;
 
 public class TFTranTermSelector extends TermSelector {
 	private static Logger logger = Logger.getLogger(ProxTermSelector.class);
@@ -181,7 +176,7 @@ public class TFTranTermSelector extends TermSelector {
 
 	@Override
 	public String getInfo() {
-		return "Prox" + proxType + "w=" + winSize + "F=" + normF;
+		return "TFTranTermSelector" + proxType + "w=" + winSize + "F=" + normF;
 	}
 
 	static double sd = Double.parseDouble(ApplicationSetup.getProperty(

@@ -31,7 +31,9 @@ package org.apache.lucene.postProcess;
 
 import gnu.trove.TObjectDoubleHashMap;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.search.model.Idf;
+import org.apache.lucene.search.model.TSDLM;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
 import org.dutir.lucene.util.ApplicationSetup;
@@ -43,7 +45,7 @@ public class MATF extends QueryExpansionModel {
 	static byte cache[] = null;
 	protected float ktf = -1f;
 	static float lambda = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda", "0.9"));
-	
+	static Logger logger = Logger.getLogger(MATF.class);
 	public float getKtf() {
 		return ktf;
 	}
@@ -89,7 +91,11 @@ public class MATF extends QueryExpansionModel {
 		float BLRTF = LRTF / (1 + LRTF);
 		
 		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
-	    
+		if(ktf > 0){
+			float log_ktf = Idf.log(1 + ktf);
+			TFF += log_ktf/(1+log_ktf) * lambda;
+		}
+//		logger.info(BRITF +":"+ BLRTF + ":" + ktf + ":" + TFF);
 	    return TFF * IDF;
 	}
 
@@ -98,26 +104,31 @@ public class MATF extends QueryExpansionModel {
 			float totalDocumentLength, float collectionLength,
 			float averageDocumentLength, float df) {
 		
-		float AEF = termFrequency/df;
+		this.totalDocumentLength = totalDocumentLength;
+		this.collectionLength = collectionLength;
+		this.averageDocumentLength = averageDocumentLength;
+		return score(withinDocumentFrequency, termFrequency, df);
 		
-		float IDF = Idf.log((numberOfDocuments + 1)/df) * AEF/(1 + AEF);
 		
-//		float QLF = ApplicationSetup.EXPANSION_TERMS; // or we should test original query length??
-		float QLF = this.originalQueryLength;
-		
-		float alpha = 2 / (1 + Idf.log(1 + QLF));
-		
-		float RITF = Idf.log(1 + withinDocumentFrequency)/Idf.log(1 + AVF);
-		float LRTF = withinDocumentFrequency * Idf.log(1 + averageDocumentLength/totalDocumentLength);
-		float BRITF = RITF/ (1 + RITF);
-		float BLRTF = LRTF / (1 + LRTF);
-		
-		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
-		if(ktf >= 0){
-			TFF += ktf/(1+ktf) * lambda;
-		}
-	    
-	    return TFF * IDF;
+//		float AEF = termFrequency/df;
+//		
+//		float IDF = Idf.log((numberOfDocuments + 1)/df) * AEF/(1 + AEF);
+//		
+////		float QLF = ApplicationSetup.EXPANSION_TERMS; // or we should test original query length??
+//		float QLF = this.originalQueryLength;
+//		
+//		float alpha = 2 / (1 + Idf.log(1 + QLF));
+//		
+//		float RITF = Idf.log(1 + withinDocumentFrequency)/Idf.log(1 + AVF);
+//		float LRTF = withinDocumentFrequency * Idf.log(1 + averageDocumentLength/totalDocumentLength);
+//		float BRITF = RITF/ (1 + RITF);
+//		float BLRTF = LRTF / (1 + LRTF);
+//		
+//		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
+//		if(ktf >= 0){
+//			TFF += ktf/(1+ktf) * lambda;
+//		}
+//	    return TFF * IDF;
 	}
 	
 	
