@@ -45,6 +45,7 @@ public class MATF extends QueryExpansionModel {
 	static float lambda2 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda2", "0.5"));
 	static float lambda3 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda3", "0.5"));
 	static Logger logger = Logger.getLogger(MATF.class);
+	
 	public float getKtf() {
 		return ktf;
 	}
