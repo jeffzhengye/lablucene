@@ -29,11 +29,8 @@
 */
 package org.apache.lucene.postProcess;
 
-import gnu.trove.TObjectDoubleHashMap;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.search.model.Idf;
-import org.apache.lucene.search.model.TSDLM;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
 import org.dutir.lucene.util.ApplicationSetup;
@@ -64,7 +61,7 @@ public class MATF extends QueryExpansionModel {
 	
 	@Override
 	public float parameterFreeNormaliser() {
-		throw new RuntimeException("TFIDF feedback error");
+		throw new RuntimeException("MATF feedback error");
 	}
 
 	@Override
@@ -93,7 +90,7 @@ public class MATF extends QueryExpansionModel {
 		float TFF = alpha * BRITF + (1 - alpha) * BLRTF;
 		if(ktf > 0){
 			float log_ktf = Idf.log(1 + ktf);
-			TFF += log_ktf/(1+log_ktf) * lambda;
+			TFF = 0 * TFF  +  log_ktf/(1+log_ktf) * lambda;
 		}
 //		logger.info(BRITF +":"+ BLRTF + ":" + ktf + ":" + TFF);
 	    return TFF * IDF;
