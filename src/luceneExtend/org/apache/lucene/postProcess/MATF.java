@@ -63,7 +63,7 @@ public class MATF extends QueryExpansionModel {
 
 	@Override
 	public String getInfo() {
-		return "MATF"+ ROCCHIO_BETA + ((ktf == -1f || pure_matf) && lambda3!=0f? "": "lambda="+Precision.round(lambda1, 2) +":"+Precision.round(lambda2, 2) +":" + Precision.round(lambda3, 2));
+		return "MATF"+ ROCCHIO_BETA + ((ktf == -1f || pure_matf) && lambda3==0f? "": "lambda="+Precision.round(lambda1, 2) +":"+Precision.round(lambda2, 2) +":" + Precision.round(lambda3, 2));
 	}
 
 	
