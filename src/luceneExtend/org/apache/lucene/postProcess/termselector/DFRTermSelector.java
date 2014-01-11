@@ -88,7 +88,7 @@ public class DFRTermSelector extends TermSelector {
 	 * @param length : doc number of QE set
 	 * @param QEModel
 	 */
-	private void assign(int length, QueryExpansionModel QEModel){
+	protected void assign(int length, QueryExpansionModel QEModel){
 		QEModel.setTotalDocumentLength(this.feedbackSetLength);
 		
 		// NOTE: if the set of candidate terms is empty, there is no need to

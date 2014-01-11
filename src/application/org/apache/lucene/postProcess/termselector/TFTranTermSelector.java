@@ -19,7 +19,7 @@ import org.dutir.lucene.util.ExpansionTerms.ExpansionTerm;
 import org.dutir.lucene.util.TermsCache;
 import org.dutir.util.Normalizer;
 
-public class TFTranTermSelector extends TermSelector {
+public class TFTranTermSelector extends DFRTermSelector {
 	private static Logger logger = Logger.getLogger(ProxTermSelector.class);
 	int winSize = Integer.parseInt(ApplicationSetup.getProperty(
 			"ProxTermSelector.winSize", "50"));
@@ -29,70 +29,6 @@ public class TFTranTermSelector extends TermSelector {
 	
 	static int proxType = Integer.parseInt(ApplicationSetup.getProperty(
 			"ProxTermSelector.proxType", "2"));
-
-	// @Override
-	// public void assignTermWeights(int[] docids, float[] scores,
-	// QueryExpansionModel QEModel) {
-	// org.dutir.util.symbol.MapSymbolTable symTable = new
-	// org.dutir.util.symbol.MapSymbolTable();
-	// String qts[] = this.originalQueryTermidSet.toArray(new String[0]);
-	// for (int i = 0; i < qts.length; i++)
-	// symTable.getOrAddSymbol(qts[i]);
-	// TermAssociation tass = TermAssociation.built(this.searcher,
-	// this.topDoc, symTable, field, winSize);
-	//
-	// selector = TermSelector.getTermSelector(
-	// "DFRTermSelector", searcher);
-	// // selector.setResultSet(this.topDoc);
-	// selector.setOriginalQueryTerms(this.originalQueryTermidSet);
-	// selector.setField(this.field);
-	// selector.assignTermWeights(docids, scores, QEModel);
-	// ExpansionTerm[] expTerms = selector.getMostWeightedTerms(selector
-	// .getNumberOfUniqueTerms());
-	// if (indexUtil == null)
-	// indexUtil = new IndexUtility(this.searcher);
-	//
-	//
-	// float idfs[] = getIDF(qts);
-	// float proxW[] = new float[expTerms.length];
-	// for (int i = 0; i < expTerms.length; i++) {
-	// proxW[i] = 0;
-	// for (int j = 0; j < qts.length; j++) {
-	// // proxW[i] += tass.conditionProb(expTerms[i].getTerm(), qts[j])
-	// // * idfs[j];
-	// proxW[i] += tass.conditionProb(expTerms[i].getTerm(), qts[j]);
-	// }
-	// }
-	//
-	// // norm(2, proxW);
-	// Normalizer.normN(proxW, normF);
-	// // print(proxW);
-	//
-	// float totalW = org.dutir.util.Arrays.sum(proxW);
-	//
-	// QEModel.setTotalDocumentLength(totalW);
-	// for (int i = 0; i < expTerms.length; i++) {
-	// // expTerms[i].setWeightExpansion(expTerms[i].getWeightExpansion()
-	// // );
-	// // revise the weight
-	// // expTerms[i].setWeightExpansion(expTerms[i].getWeightExpansion()
-	// // * proxW[i]);
-	//
-	// TermsCache.Item item = getItem(expTerms[i].getTerm());
-	// float TF = item.ctf;
-	// float weight = QEModel.score(proxW[i], TF);
-	// expTerms[i].setWeightExpansion(weight);
-	// }
-	//
-	// Arrays.sort(expTerms);
-	// this.termMap = new HashMap<String, ExpansionTerm>(1024);
-	// float normaliser = expTerms[0].getWeightExpansion();
-	// for (ExpansionTerm term : expTerms) {
-	// term.setWeightExpansion(term.getWeightExpansion() / normaliser);
-	// termMap.put(term.getTerm(), term);
-	// }
-	//
-	// }
 
 	public void assignTermWeights(int[] docids, float[] scores,
 			QueryExpansionModel QEModel) {
@@ -122,22 +58,22 @@ public class TFTranTermSelector extends TermSelector {
 				posCBTerm.insert(strterms, freqs, tfv);
 			}
 		}
+		this.fscore = posCBTerm.fscore;
+		this.getTerms(sterms, termFreqs, tfvs);
+		assign(sterms.length, QEModel);
 //		posCBTerm.compute();
 
 		// ///////////////////////////////////////////////////////////////
-		
-		String qts[] = this.originalQueryTermidSet.toArray(new String[0]);
-		TermSelector selector = null;
-		selector = TermSelector.getTermSelector("DFRTermSelector", searcher);
-		((DFRTermSelector) selector).setFscore(posCBTerm.fscore);
-		selector.setResultSet(this.topDoc);
-		selector.setOriginalQueryTerms(this.originalQueryTermidSet);
-		selector.setField(this.field);
-//		selector.assignTermWeights(docids, scores, QEModel);
-		selector.assignTermWeights(sterms, termFreqs, tfvs, QEModel);
-//		ExpansionTerm[] expTerms = selector.getMostWeightedTerms(selector
-//				.getNumberOfUniqueTerms());
-		this.termMap = (HashMap<String, ExpansionTerm>) selector.termMap.clone();
+//		TermSelector selector = null;
+//		selector = TermSelector.getTermSelector("DFRTermSelector", searcher);
+//		((DFRTermSelector) selector).setFscore(posCBTerm.fscore);
+//		selector.setResultSet(this.topDoc);
+//		selector.setOriginalQueryTerms(this.originalQueryTermidSet);
+//		selector.setField(this.field);
+//		selector.setMetaInfo("normalize.weights", "false");
+////		selector.assignTermWeights(docids, scores, QEModel);
+//		selector.assignTermWeights(sterms, termFreqs, tfvs, QEModel);
+//		this.termMap = (HashMap<String, ExpansionTerm>) selector.termMap.clone();
 	}
 	
 	void print(float[] array) {
