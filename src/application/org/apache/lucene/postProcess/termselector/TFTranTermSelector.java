@@ -128,11 +128,11 @@ public class TFTranTermSelector extends TermSelector {
 		TermSelector selector = null;
 		selector = TermSelector.getTermSelector("DFRTermSelector", searcher);
 		((DFRTermSelector) selector).setFscore(posCBTerm.fscore);
-		// selector.setResultSet(this.topDoc);
+//		selector.setResultSet(this.topDoc);
 		selector.setOriginalQueryTerms(this.originalQueryTermidSet);
 		selector.setField(this.field);
-//		selector.assignTermWeights(docids, scores, QEModel);
-		selector.assignTermWeights(sterms, termFreqs, tfvs, QEModel);
+		selector.assignTermWeights(docids, scores, QEModel);
+//		selector.assignTermWeights(sterms, termFreqs, tfvs, QEModel);
 //		ExpansionTerm[] expTerms = selector.getMostWeightedTerms(selector
 //				.getNumberOfUniqueTerms());
 		this.termMap = selector.termMap;
