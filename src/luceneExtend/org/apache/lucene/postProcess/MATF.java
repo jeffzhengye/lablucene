@@ -46,7 +46,7 @@ public class MATF extends QueryExpansionModel {
 	protected float ktf = -1f;
 	static float lambda1 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda1", "1.0"));
 	static float lambda2 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda2", "0.5"));
-	static float lambda3 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda3", "0.5"));
+	static float lambda3 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda3", "0"));
 	static boolean pure_matf = Boolean.parseBoolean(ApplicationSetup.getProperty("MATF.purematf", "true"));
 	static Logger logger = Logger.getLogger(MATF.class);
 	
@@ -63,7 +63,7 @@ public class MATF extends QueryExpansionModel {
 
 	@Override
 	public String getInfo() {
-		return "MATF"+ ROCCHIO_BETA + (ktf == -1f || pure_matf? "": "lambda="+Precision.round(lambda1, 2) +":"+Precision.round(lambda2, 2) +":" + Precision.round(lambda3, 2));
+		return "MATF"+ ROCCHIO_BETA + ((ktf == -1f || pure_matf) && lambda3!=0f? "": "lambda="+Precision.round(lambda1, 2) +":"+Precision.round(lambda2, 2) +":" + Precision.round(lambda3, 2));
 	}
 
 	
@@ -99,7 +99,7 @@ public class MATF extends QueryExpansionModel {
 			lambda2 = 1 - alpha;
 		}
 		float TFF = lambda1 * BRITF + lambda2 * BLRTF;
-		if(ktf > 0 && !pure_matf){
+		if(ktf > 0 ){ //&& !pure_matf is removed, set lambda3=0 for replacement
 			float log_ktf = Idf.log(1 + ktf);
 			TFF = TFF  +  log_ktf/(1+log_ktf) * lambda3;
 		}
