@@ -29,11 +29,14 @@
 */
 package org.apache.lucene.postProcess;
 
+import javax.print.attribute.standard.PresentationDirection;
+
 import org.apache.log4j.Logger;
 import org.apache.lucene.search.model.Idf;
 import org.apache.lucene.util.SmallFloat;
 import org.dutir.lucene.util.ATFCache;
 import org.dutir.lucene.util.ApplicationSetup;
+import org.apache.commons.math3.util.Precision;
 
 import redis.clients.jedis.Jedis;
 
@@ -44,7 +47,9 @@ public class MATF extends QueryExpansionModel {
 	static float lambda1 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda1", "1.0"));
 	static float lambda2 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda2", "0.5"));
 	static float lambda3 = Float.parseFloat(ApplicationSetup.getProperty("MATF.lambda3", "0.5"));
+	static boolean pure_matf = Boolean.parseBoolean(ApplicationSetup.getProperty("MATF.purematf", "true"));
 	static Logger logger = Logger.getLogger(MATF.class);
+	
 	
 	public float getKtf() {
 		return ktf;
@@ -58,7 +63,7 @@ public class MATF extends QueryExpansionModel {
 
 	@Override
 	public String getInfo() {
-		return "MATF"+ ROCCHIO_BETA + (ktf == -1f? "": "lambda="+lambda1 +":"+lambda2 +":" + lambda3);
+		return "MATF"+ ROCCHIO_BETA + (ktf == -1f || pure_matf? "": "lambda="+Precision.round(lambda1, 2) +":"+Precision.round(lambda2, 2) +":" + Precision.round(lambda3, 2));
 	}
 
 	
@@ -89,14 +94,14 @@ public class MATF extends QueryExpansionModel {
 		float LRTF = withinDocumentFrequency * Idf.log(1 + averageDocumentLength/totalDocumentLength);
 		float BRITF = RITF/ (1 + RITF);
 		float BLRTF = LRTF / (1 + LRTF);
-		
-		lambda1 = alpha;
-		lambda2 = 1 - alpha;
+		if(pure_matf){
+			lambda1 = alpha;
+			lambda2 = 1 - alpha;
+		}
 		float TFF = lambda1 * BRITF + lambda2 * BLRTF;
-		if(ktf > 0){
+		if(ktf > 0 && !pure_matf){
 			float log_ktf = Idf.log(1 + ktf);
-			log_ktf = ktf;
-			TFF = 0 * TFF  +  log_ktf/(1+log_ktf) * lambda3;
+			TFF = TFF  +  log_ktf/(1+log_ktf) * lambda3;
 		}
 //		logger.info(BRITF +":"+ BLRTF + ":" + ktf + ":" + TFF);
 	    return TFF * IDF;
@@ -167,8 +172,9 @@ public class MATF extends QueryExpansionModel {
         System.out.println("\n-----------------\n");
  
         //断言2结果为false,程序终止
-        assert false : "断言失败，此表达式的信息将会在抛出异常的时候输出！";
-        System.out.println("断言2没有问题，Go！");
+//        assert false : "断言失败，此表达式的信息将会在抛出异常的时候输出！";
+        
+        System.out.println("断言2没有问题，Go！" + Precision.round(131.09523f, 2));
 	}
 
 

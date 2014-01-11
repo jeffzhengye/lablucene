@@ -24,7 +24,7 @@ public class TFTranTermSelector extends TermSelector {
 	float normF = Float.parseFloat(ApplicationSetup.getProperty(
 			"ProxTermSelector.normPow", "0.5"));
 	IndexUtility indexUtil = null;
-	TermSelector selector = null;
+	
 	static int proxType = Integer.parseInt(ApplicationSetup.getProperty(
 			"ProxTermSelector.proxType", "2"));
 
@@ -125,6 +125,7 @@ public class TFTranTermSelector extends TermSelector {
 		// ///////////////////////////////////////////////////////////////
 		
 		String qts[] = this.originalQueryTermidSet.toArray(new String[0]);
+		TermSelector selector = null;
 		selector = TermSelector.getTermSelector("DFRTermSelector", searcher);
 		((DFRTermSelector) selector).setFscore(posCBTerm.fscore);
 		// selector.setResultSet(this.topDoc);

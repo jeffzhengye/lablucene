@@ -61,7 +61,10 @@ public class QueryExpansionAdap extends QueryExpansion {
 		selector.setResultSet(topDoc);
 		selector.setOriginalQueryTerms(termSet);
 		selector.setField(field);
-		
+		if(fdocs.docid.length <= 0){
+			logger.warn("there is no sufficial feedback docs for topic " + topicId);
+			return topDoc;
+		}
 		ExpansionTerm[] expandedTerms = expandFromDocuments(fdocs.docid, fdocs.score, numberOfTermsToReweight, QEModel, selector);
 
 		feedbackStrategy = selector.getInfo();
