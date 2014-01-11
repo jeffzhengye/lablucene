@@ -4,6 +4,7 @@ import gnu.trove.TObjectDoubleHashMap;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.commons.math.distribution.NormalDistributionImpl;
@@ -14,6 +15,7 @@ import org.apache.lucene.search.model.Idf;
 import org.dutir.lucene.IndexUtility;
 import org.dutir.lucene.util.ApplicationSetup;
 import org.dutir.lucene.util.Distance;
+import org.dutir.lucene.util.ExpansionTerms.ExpansionTerm;
 import org.dutir.lucene.util.TermsCache;
 import org.dutir.util.Normalizer;
 
@@ -131,11 +133,11 @@ public class TFTranTermSelector extends TermSelector {
 		selector.setResultSet(this.topDoc);
 		selector.setOriginalQueryTerms(this.originalQueryTermidSet);
 		selector.setField(this.field);
-		selector.assignTermWeights(docids, scores, QEModel);
-//		selector.assignTermWeights(sterms, termFreqs, tfvs, QEModel);
+//		selector.assignTermWeights(docids, scores, QEModel);
+		selector.assignTermWeights(sterms, termFreqs, tfvs, QEModel);
 //		ExpansionTerm[] expTerms = selector.getMostWeightedTerms(selector
 //				.getNumberOfUniqueTerms());
-		this.termMap = selector.termMap;
+		this.termMap = (HashMap<String, ExpansionTerm>) selector.termMap.clone();
 	}
 	
 	void print(float[] array) {
