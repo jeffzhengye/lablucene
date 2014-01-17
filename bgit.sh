@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-ant jar; git add src/; git add lib/;
+ant jar; git add src/; git add etc/; git add lib/;
 
 if [ -n "$1" ];
 then
