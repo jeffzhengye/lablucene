@@ -94,6 +94,11 @@ public class MATF extends QueryExpansionModel {
 		float LRTF = withinDocumentFrequency * Idf.log(1 + averageDocumentLength/totalDocumentLength);
 		float BRITF = RITF/ (1 + RITF);
 		float BLRTF = LRTF / (1 + LRTF);
+		
+		//////////////////////////
+		BRITF = RITF;
+		BLRTF = LRTF;
+		////////////////////////
 		if(pure_matf){
 			lambda1 = alpha;
 			lambda2 = 1 - alpha;
